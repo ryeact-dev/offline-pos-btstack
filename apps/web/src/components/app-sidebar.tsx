@@ -41,6 +41,7 @@ const data = {
     {
       title: 'Dashboard',
       url: '#',
+      search: {},
       icon: IconDashboard,
     },
     {
