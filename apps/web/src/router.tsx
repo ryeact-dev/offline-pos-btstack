@@ -12,8 +12,8 @@ export const createRouter = () => {
     routeTree,
     context: { queryClient },
     defaultPreload: 'intent',
-    defaultPendingComponent: Loader,
-    // defaultErrorComponent: <></>,
+    defaultPendingComponent: () => <Loader />,
+    defaultNotFoundComponent: () => <div>Not Found</div>,
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     Wrap: ({ children }: { children: React.ReactNode }) => (
