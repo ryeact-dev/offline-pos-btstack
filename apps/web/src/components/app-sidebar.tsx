@@ -40,95 +40,49 @@ const data = {
   navMain: [
     {
       title: 'Dashboard',
-      url: '#',
-      search: {},
+      url: '/',
+      // search: {},
       icon: IconDashboard,
     },
     {
-      title: 'Lifecycle',
-      url: '#',
+      title: 'Products',
+      url: '/products',
+      // search: {},
       icon: IconListDetails,
     },
     {
-      title: 'Analytics',
-      url: '#',
+      title: 'Inventory',
+      url: '/inventory',
       icon: IconChartBar,
     },
     {
-      title: 'Projects',
-      url: '#',
+      title: 'Transactions',
+      url: '/transactions',
       icon: IconFolder,
     },
     {
-      title: 'Team',
-      url: '#',
+      title: 'Users',
+      url: '/users',
       icon: IconUsers,
     },
   ],
-  navClouds: [
-    {
-      title: 'Capture',
-      icon: IconCamera,
-      isActive: true,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Proposal',
-      icon: IconFileDescription,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Prompts',
-      icon: IconFileAi,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-  ],
+
   navSecondary: [
     {
       title: 'Settings',
-      url: '#',
+      url: '/settings',
       icon: IconSettings,
     },
-    {
-      title: 'Get Help',
-      url: '#',
-      icon: IconHelp,
-    },
-    {
-      title: 'Search',
-      url: '#',
-      icon: IconSearch,
-    },
+    // {
+    //   title: 'Get Help',
+    //   url: '#',
+    //   icon: IconHelp,
+    // },
+    // {
+    //   title: 'Search',
+    //   url: '#',
+    //   icon: IconSearch,
+    // },
   ],
   documents: [
     {

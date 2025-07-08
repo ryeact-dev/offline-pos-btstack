@@ -8,7 +8,6 @@ import {
   useRouterState,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import Header from '../components/header';
 import appCss from '../index.css?url';
 import Loader from '@/components/loader';
 import type { QueryClient } from '@tanstack/react-query';
