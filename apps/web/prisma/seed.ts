@@ -20,27 +20,27 @@ async function main() {
   });
 
   // Create judge user
-  const judgePassword = hashPassword('judge123');
+  const judgePassword = hashPassword('manager123');
   await prisma.users.upsert({
-    where: { username: 'judge1' },
+    where: { username: 'manager' },
     update: {},
     create: {
-      username: 'judge1',
+      username: 'manager',
       password: judgePassword,
-      fullName: 'Judge User',
+      fullName: 'Manager User',
       isActive: true,
     },
   });
 
   // Create regular user
-  const userPassword = hashPassword('user123');
+  const userPassword = hashPassword('staff123');
   await prisma.users.upsert({
-    where: { username: 'user1' },
+    where: { username: 'staff' },
     update: {},
     create: {
-      username: 'user1',
+      username: 'staff',
       password: userPassword,
-      fullName: 'Regular User',
+      fullName: 'Staff User',
       isActive: true,
     },
   });
