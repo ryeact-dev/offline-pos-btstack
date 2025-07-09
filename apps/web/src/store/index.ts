@@ -4,7 +4,7 @@ import { Store } from '@tanstack/react-store';
 // Modal Store
 export const modalStore = new Store<ModalProps>({
   isModalOpen: false,
-  size: 'md',
+  // size: 'md',
   data: { type: '', data: {} },
   title: '',
 });
@@ -14,7 +14,7 @@ export function openModal(newState: ModalProps) {
     return {
       ...state,
       isModalOpen: newState.isModalOpen,
-      size: newState.size,
+      // size: newState.size,
       data: newState.data,
       title: newState.title,
     };
@@ -36,7 +36,7 @@ export function closeModal() {
 export const sheetStore = new Store<ModalProps>({
   isSheetOpen: false,
   title: '',
-  size: 'md',
+  // size: 'md',
   data: { type: '', data: {} },
 });
 
@@ -46,7 +46,7 @@ export function openSheet(newState: ModalProps) {
       ...state,
       isSheetOpen: newState.isSheetOpen,
       title: newState.title,
-      size: newState.size,
+      // size: newState.size,
       data: newState.data,
     };
   });
