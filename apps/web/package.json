@@ -2,6 +2,9 @@
   "name": "web",
   "private": true,
   "type": "module",
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "scripts": {
     "build": "vite build",
     "serve": "vite preview",
