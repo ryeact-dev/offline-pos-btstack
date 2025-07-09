@@ -51,14 +51,14 @@ const data = {
       icon: IconListDetails,
     },
     {
-      title: 'Inventory',
-      url: '/inventory',
-      icon: IconChartBar,
-    },
-    {
       title: 'Transactions',
       url: '/transactions',
       icon: IconFolder,
+    },
+    {
+      title: 'Inventory',
+      url: '/inventory',
+      icon: IconChartBar,
     },
     {
       title: 'Users',
