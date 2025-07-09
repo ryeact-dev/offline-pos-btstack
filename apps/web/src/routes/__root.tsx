@@ -14,6 +14,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { SiteHeader } from '@/components/site-header';
 import { AppSidebar } from '@/components/app-sidebar';
+import DrawerContainer from '@/components/drawer-container';
 
 export interface RouterAppContext {
   queryClient: QueryClient;
@@ -70,6 +71,8 @@ function RootDocument() {
                 <SiteHeader />
                 <Outlet />
               </SidebarInset>
+
+              <DrawerContainer />
             </SidebarProvider>
           )}
         </div>
