@@ -20,10 +20,8 @@ import * as React from 'react';
 // import { CSS } from '@dnd-kit/utilities';
 import {
   IconChevronDown,
-  IconCircleCheckFilled,
-  IconDotsVertical,
+  IconChevronUp,
   IconLayoutColumns,
-  IconLoader,
   IconPlus,
   IconTrendingUp,
 } from '@tabler/icons-react';
@@ -31,7 +29,6 @@ import {
 import type {
   ColumnDef,
   ColumnFiltersState,
-  Row,
   SortingState,
   VisibilityState,
 } from '@tanstack/react-table';
@@ -73,8 +70,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
@@ -97,6 +92,7 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PaginationTable from './pagination-table';
+import { cn } from '@/lib/utils';
 
 export const schema = z.object({
   id: z.number(),
@@ -156,10 +152,14 @@ export const schema = z.object({
 export function DataTable({
   data: initialData,
   columns,
+  buttonName = 'Not set',
+  onAddNew,
 }: {
   // data: z.infer<typeof schema>[];
   columns: ColumnDef<any>[];
   data: any;
+  buttonName: string;
+  onAddNew: () => void;
 }) {
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
@@ -283,15 +283,15 @@ export function DataTable({
                         column.toggleVisibility(!!value)
                       }
                     >
-                      {column.id}
+                      {column.columnDef.header as string}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant='outline' size='sm'>
+          <Button variant='outline' size='sm' onClick={onAddNew}>
             <IconPlus />
-            <span className='hidden lg:inline'>Add Section</span>
+            <span className='hidden lg:inline'>{buttonName}</span>
           </Button>
         </div>
       </div>
@@ -309,7 +309,7 @@ export function DataTable({
           > */}
           <Table>
             <TableHeader className='bg-muted sticky top-0 z-10'>
-              {table.getHeaderGroups().map((headerGroup) => (
+              {/* {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
@@ -320,6 +320,80 @@ export function DataTable({
                               header.column.columnDef.header,
                               header.getContext()
                             )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))} */}
+
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className='bg-muted/50'>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className={cn(
+                          'relative h-10 border-t select-none ',
+                          header.id === 'actions' ? '' : 'min-w-44 shrink-0'
+                        )}
+                        aria-sort={
+                          header.column.getIsSorted() === 'asc'
+                            ? 'ascending'
+                            : header.column.getIsSorted() === 'desc'
+                              ? 'descending'
+                              : 'none'
+                        }
+                      >
+                        {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                          <div
+                            className={cn(
+                              header.column.getCanSort() &&
+                                'flex h-full cursor-pointer items-center justify-between gap-2 select-none'
+                            )}
+                            onClick={header.column.getToggleSortingHandler()}
+                            onKeyDown={(e) => {
+                              // Enhanced keyboard handling for sorting
+                              if (
+                                header.column.getCanSort() &&
+                                (e.key === 'Enter' || e.key === ' ')
+                              ) {
+                                e.preventDefault();
+                                header.column.getToggleSortingHandler()?.(e);
+                              }
+                            }}
+                            tabIndex={
+                              header.column.getCanSort() ? 0 : undefined
+                            }
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                            {{
+                              asc: (
+                                <IconChevronUp
+                                  className='shrink-0 opacity-60'
+                                  size={16}
+                                  aria-hidden='true'
+                                />
+                              ),
+                              desc: (
+                                <IconChevronDown
+                                  className='shrink-0 opacity-60'
+                                  size={16}
+                                  aria-hidden='true'
+                                />
+                              ),
+                            }[header.column.getIsSorted() as string] ?? (
+                              <span className='size-4' aria-hidden='true' />
+                            )}
+                          </div>
+                        ) : (
+                          flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )
+                        )}
                       </TableHead>
                     );
                   })}
