@@ -106,53 +106,25 @@ const columns: ColumnDef<DashboardTable>[] = [
   },
   {
     accessorKey: 'target',
-    header: () => <div className='w-full text-right'>Target</div>,
-    cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
-            success: 'Done',
-            error: 'Error',
-          });
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-target`} className='sr-only'>
-          Target
-        </Label>
-        <Input
-          className='hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent'
-          defaultValue={row.original.target}
-          id={`${row.original.id}-target`}
-        />
-      </form>
-    ),
+    header: 'Target',
+    cell: ({ row }) => {
+      return (
+        <div className='text-foreground w-fit px-0 text-left'>
+          {row.original.target}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'limit',
-    header: () => <div className='w-full text-right'>Limit</div>,
-    cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
-            success: 'Done',
-            error: 'Error',
-          });
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-limit`} className='sr-only'>
-          Limit
-        </Label>
-        <Input
-          className='hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent'
-          defaultValue={row.original.limit}
-          id={`${row.original.id}-limit`}
-        />
-      </form>
-    ),
+    header: 'Limit',
+    cell: ({ row }) => {
+      return (
+        <div className='text-foreground w-fit px-0 text-left'>
+          {row.original.limit}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'reviewer',
