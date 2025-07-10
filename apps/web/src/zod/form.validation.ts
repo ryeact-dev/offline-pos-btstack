@@ -11,8 +11,8 @@ export type UserFormValues = z.infer<typeof userBaseSchema>;
 export const productBaseSchema = z.object({
   name: z.string().min(6, 'Name is required'),
   price: z.number().min(1, 'Price is required'),
-  description: z.string().min(6, 'Description is required'),
-  category: z.string().min(6, 'Category is required'),
+  description: z.string().optional(),
+  category: z.string().min(2, 'Category is required'),
   stockQuantity: z.number().min(1, 'Stock Quantity is required'),
   image64Base: z.string().base64('Image64 Base is required').optional(),
   sku: z.string().min(5, 'SKU is required'),

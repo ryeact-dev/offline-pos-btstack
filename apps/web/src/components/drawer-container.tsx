@@ -11,6 +11,8 @@ import {
 } from './ui/drawer';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from './ui/button';
+import AddProductDrawer from './drawers/add-product/add-product';
+import type { ProductFormValues } from '@/zod/form.validation';
 
 export default function DrawerContainer() {
   const { isSheetOpen, data, title } = useStore(sheetStore);
@@ -19,14 +21,14 @@ export default function DrawerContainer() {
   let body = <div>Default Body</div>;
 
   switch (data.type) {
-    //   case 'event':
-    //     body = (
-    //       <AddEventSheetBody
-    //         eventInfo={data.data as Event}
-    //         onClose={closeSheet}
-    //       />
-    //     )
-    //     break
+    case 'add-product':
+      body = (
+        <AddProductDrawer
+          data={data.data as ProductFormValues}
+          onClose={closeSheet}
+        />
+      );
+      break;
 
     //   case 'manager':
     //     body = (
@@ -73,7 +75,7 @@ export default function DrawerContainer() {
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
-          <DrawerDescription>Description</DrawerDescription>
+          <DrawerDescription />
         </DrawerHeader>
         <div className='flex flex-col gap-4 overflow-y-auto px-4 text-sm h-full'>
           {body}

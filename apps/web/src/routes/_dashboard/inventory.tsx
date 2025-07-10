@@ -173,9 +173,9 @@ const data = [
 
 const onAddNewProduct = () => {
   openSheet({
-    title: 'Manager Details',
+    title: 'Product Details',
     data: {
-      type: 'manager',
+      type: 'add-product',
       data: null,
     },
     isSheetOpen: true,
