@@ -21,7 +21,6 @@ model Users {
   password  String   @default("")
   role      String   @default("staff")
   isActive  Boolean  @default(true)
-  isAdmin   Boolean  @default(false)
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
 
@@ -37,7 +36,7 @@ model Products {
   description    String
   category       String
   stockQuantity  Int
-  image64Base    String
+  image64Base    String?
   sku            String
   barcode        String
   expirationDate DateTime
