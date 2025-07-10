@@ -22,12 +22,7 @@ export default function DrawerContainer() {
 
   switch (data.type) {
     case 'add-product':
-      body = (
-        <AddProductDrawer
-          data={data.data as ProductFormValues}
-          onClose={closeSheet}
-        />
-      );
+      body = <AddProductDrawer data={data.data as ProductFormValues} />;
       break;
 
     //   case 'manager':
@@ -71,7 +66,11 @@ export default function DrawerContainer() {
   }
 
   return (
-    <Drawer open={isSheetOpen} direction={isMobile ? 'bottom' : 'right'}>
+    <Drawer
+      open={isSheetOpen}
+      dismissible={isMobile}
+      direction={isMobile ? 'bottom' : 'right'}
+    >
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>

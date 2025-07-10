@@ -1,6 +1,7 @@
 // * This drawer is used to add a new product to the inventory
 
 import DrawerFooterButtons from '@/components/draw-footer-buttons';
+import FormErrorComponent from '@/components/form-error-component';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -52,21 +53,24 @@ const DEFAULT_FORM_VALUES = {
 
 export default function AddProductDrawer({
   data,
-  onClose,
 }: {
   data: ProductFormValues | null;
-  onClose: () => void;
 }) {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productBaseSchema),
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
-  function onSubmit(values: ProductFormValues) {
+  const onResetFormInputs = () => {
+    form.reset(DEFAULT_FORM_VALUES);
+  };
+
+  const onSubmit = (values: ProductFormValues) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
-  }
+    // onResetFormInputs();
+  };
 
   console.log(form.formState.errors);
 
@@ -75,7 +79,7 @@ export default function AddProductDrawer({
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         // className='h-[98%] flex flex-col justify-between'
-        className='space-y-12'
+        className='space-y-6'
       >
         <div className='space-y-4'>
           <div className='grid grid-cols-4 gap-3'>
@@ -134,7 +138,7 @@ export default function AddProductDrawer({
                   <FormLabel className='my-1'>Category</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    // defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger className='w-full'>
@@ -143,14 +147,14 @@ export default function AddProductDrawer({
                     </FormControl>
                     <SelectContent>
                       {PRODUCT_CATEGORY.map((category) => (
-                        <SelectItem value={category.value}>
+                        <SelectItem key={category.value} value={category.value}>
                           {category.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   <FormDescription />
-                  <FormMessage />
+                  {/* <FormMessage /> */}
                 </FormItem>
               )}
             />
@@ -317,6 +321,7 @@ export default function AddProductDrawer({
             />
           </div>
         </div>
+        <FormErrorComponent errors={form.formState.errors} />
         {/* <Button type='submit'>Submit</Button> */}
         <DrawerFooterButtons />
       </form>
