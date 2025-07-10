@@ -8,7 +8,7 @@ interface ToastNotificationProps {
   toastType?: ToastType;
 }
 
-export const ToastNotification = ({
+export const toastNotification = ({
   title,
   description,
   toastType = 'success',

@@ -25,7 +25,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-export function NavDocuments({
+export default function NavDocuments({
   items,
 }: {
   items: {
