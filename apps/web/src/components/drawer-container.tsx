@@ -12,7 +12,7 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from './ui/button';
 import AddProductDrawer from './drawers/add-product/add-product';
-import type { ProductFormValues } from '@/zod/form.validation';
+import type { InventoryItemFormValues } from '@/zod/inventory.validation';
 
 export default function DrawerContainer() {
   const { isSheetOpen, data, title } = useStore(sheetStore);
@@ -22,7 +22,12 @@ export default function DrawerContainer() {
 
   switch (data.type) {
     case 'add-product':
-      body = <AddProductDrawer data={data.data as ProductFormValues} />;
+      body = (
+        <AddProductDrawer
+          data={data.data as InventoryItemFormValues}
+          onClose={closeSheet}
+        />
+      );
       break;
 
     //   case 'manager':

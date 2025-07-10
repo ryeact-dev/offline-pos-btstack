@@ -26,12 +26,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useAddProductMutation } from '@/hooks/inventory.hook';
 import { cn } from '@/lib/utils';
 import { PRODUCT_CATEGORY } from '@/utils/global-constant';
 import {
-  productBaseSchema,
-  type ProductFormValues,
-} from '@/zod/form.validation';
+  inventoryItemBaseSchema,
+  type InventoryItemFormValues,
+} from '@/zod/inventory.validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconCalendar } from '@tabler/icons-react';
 import { format } from 'date-fns';
@@ -39,6 +40,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 const DEFAULT_FORM_VALUES = {
+  id: 0,
   name: '',
   price: 0,
   description: '',
@@ -53,11 +55,13 @@ const DEFAULT_FORM_VALUES = {
 
 export default function AddProductDrawer({
   data,
+  onClose,
 }: {
-  data: ProductFormValues | null;
+  data: InventoryItemFormValues | null;
+  onClose: () => void;
 }) {
-  const form = useForm<ProductFormValues>({
-    resolver: zodResolver(productBaseSchema),
+  const form = useForm<InventoryItemFormValues>({
+    resolver: zodResolver(inventoryItemBaseSchema),
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
@@ -65,14 +69,13 @@ export default function AddProductDrawer({
     form.reset(DEFAULT_FORM_VALUES);
   };
 
-  const onSubmit = (values: ProductFormValues) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-    // onResetFormInputs();
-  };
+  const { mutate: addProductMutate, isPending: isAddingProduct } =
+    useAddProductMutation(onResetFormInputs, onClose);
 
-  console.log(form.formState.errors);
+  const onSubmit = (values: InventoryItemFormValues) => {
+    console.log(values);
+    addProductMutate(values);
+  };
 
   return (
     <Form {...form}>
@@ -323,7 +326,7 @@ export default function AddProductDrawer({
         </div>
         <FormErrorComponent errors={form.formState.errors} />
         {/* <Button type='submit'>Submit</Button> */}
-        <DrawerFooterButtons />
+        <DrawerFooterButtons isLoading={isAddingProduct} />
       </form>
     </Form>
   );
