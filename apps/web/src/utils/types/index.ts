@@ -1,3 +1,4 @@
+import type { ProductFormValues } from '@/zod/form.validation';
 import type { Decimal } from '@prisma/client/runtime/library';
 import type React from 'react';
 
@@ -95,8 +96,8 @@ export type ModalData =
   // | { type: 'user'; data: UserWithEventAndCompetitions | null }
   // | { type: 'competition'; data: UserCompetition | null }
   // | { type: 'candidate'; data: CandidateNoCreatedAt | null }
-  // | { type: 'scoresheet'; data: SingleCandidateWithScoresheet }
-  { type: string; data: Record<string, unknown> };
+  | { type: 'add-product'; data: ProductFormValues | null }
+  | { type: string; data: Record<string, unknown> };
 
 // export type ModalSize =
 //   | 'md'
