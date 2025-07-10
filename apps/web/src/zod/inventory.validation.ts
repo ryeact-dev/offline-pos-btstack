@@ -18,19 +18,4 @@ export const inventoryItemBaseSchema = z.object({
     .min(new Date('2024-01-01'), 'Delivery Date is required'),
 });
 
-const inventoryTableSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  price: z.number(),
-  description: z.string(),
-  category: z.string(),
-  stockQuantity: z.string(),
-  image64Base: z.string(),
-  sku: z.string(),
-  barcode: z.string(),
-  expirationDate: z.string(),
-  deliveryDate: z.string(),
-});
-
 export type InventoryItemFormValues = z.infer<typeof inventoryItemBaseSchema>;
-export type InventoryTableValues = z.infer<typeof inventoryTableSchema>;
