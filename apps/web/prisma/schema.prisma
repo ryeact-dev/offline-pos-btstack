@@ -32,7 +32,7 @@ model Users {
 
 model Products {
   id             Int      @id @default(autoincrement())
-  name           String   @unique
+  name           String   
   price          Decimal  @default(0) @db.Decimal(10, 2)
   description    String   @default("")
   category       String
