@@ -73,7 +73,6 @@ export default function AddProductDrawer({
     useAddProductMutation(onResetFormInputs, onClose);
 
   const onSubmit = (values: InventoryItemFormValues) => {
-    console.log(values);
     addProductMutate(values);
   };
 

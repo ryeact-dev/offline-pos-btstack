@@ -1,6 +1,5 @@
 import { ChartAreaInteractive } from '@/components/chart-area-interactive';
-import { DataTable } from '@/components/data-table';
-import { SectionCards } from '@/components/section-cards';
+import DataTable from '@/components/data-table';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_dashboard/')({
@@ -34,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import SectionCards from '@/components/section-cards';
 
 const columns: ColumnDef<DashboardTable>[] = [
   // {

@@ -71,8 +71,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import PaginationTable from './pagination-table';
 import { cn } from '@/lib/utils';
+import PaginationTable from './pagination-table';
 
 export const schema = z.object({
   id: z.number(),
@@ -129,8 +129,8 @@ export const schema = z.object({
 //   );
 // }
 
-export function DataTable({
-  data: initialData,
+export default function DataTable({
+  data,
   columns,
   buttonName = 'Not set',
   onAddNew,
@@ -141,7 +141,6 @@ export function DataTable({
   buttonName: string;
   onAddNew: () => void;
 }) {
-  const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});

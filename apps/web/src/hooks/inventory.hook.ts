@@ -1,4 +1,4 @@
-import { ToastNotification } from '@/components/toast-notification';
+import { toastNotification } from '@/components/toastTotification';
 import {
   addProductServerFn,
   getAllProductsServerFn,
@@ -33,7 +33,7 @@ export function useAddProductMutation(reset: () => void, onClose: () => void) {
     mutationFn: (data) => addProductServerFn({ data }),
 
     onError: ({ data }) => {
-      return ToastNotification({
+      return toastNotification({
         toastType: 'error',
         title: 'Add product',
         description: data.message,
@@ -41,14 +41,14 @@ export function useAddProductMutation(reset: () => void, onClose: () => void) {
     },
     onSuccess: (data) => {
       if (!data.success) {
-        return ToastNotification({
+        return toastNotification({
           toastType: 'error',
           title: 'Add competition',
           description: data.message,
         });
       }
 
-      ToastNotification({
+      toastNotification({
         toastType: 'success',
         title: 'Add competition',
         description: data.message,
