@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { openSheet } from '@/store';
-import type { InventoryTable } from '@/zod/table.validation';
+import type { InventoryTableValues } from '@/zod/inventory.validation';
 import {
   IconCircleCheckFilled,
   IconDotsVertical,
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/_dashboard/inventory')({
   component: RouteComponent,
 });
 
-const columns: ColumnDef<InventoryTable>[] = [
+const columns: ColumnDef<InventoryTableValues>[] = [
   // {
   //   id: 'drag',
   //   header: () => null,

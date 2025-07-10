@@ -1,4 +1,4 @@
-import type { ProductFormValues } from '@/zod/form.validation';
+import type { InventoryItemFormValues } from '@/zod/inventory.validation';
 import type { Decimal } from '@prisma/client/runtime/library';
 import type React from 'react';
 
@@ -96,7 +96,7 @@ export type ModalData =
   // | { type: 'user'; data: UserWithEventAndCompetitions | null }
   // | { type: 'competition'; data: UserCompetition | null }
   // | { type: 'candidate'; data: CandidateNoCreatedAt | null }
-  | { type: 'add-product'; data: ProductFormValues | null }
+  | { type: 'add-product'; data: InventoryItemFormValues | null }
   | { type: string; data: Record<string, unknown> };
 
 // export type ModalSize =
@@ -119,21 +119,15 @@ export interface ModalProps {
   data: ModalData;
 }
 
-//  Counter Login Credentials
-export interface UserLoginCredentials {
-  username: string;
-  password: string;
-}
-
 // API Response
 export interface ApiResponse {
   success: boolean;
   message: string;
 }
 
-// export interface ErrorWithDataResponse extends Error {
-//   data: ApiResponse
-// }
+export interface ErrorWithDataResponse extends Error {
+  data: ApiResponse;
+}
 
 // export interface UserApiResponse extends ApiResponse {
 //   user: CurrentUser | null
