@@ -33,13 +33,25 @@ export async function getAllProductsDb() {
   }
 }
 
-export async function addProductDb(
-  product: Omit<InventoryItemFormValues, 'id'>
-) {
+export async function addProductDb(product: InventoryItemFormValues) {
   try {
+    const productWithSameDeliverDate = await prisma.products.findMany({
+      where: {
+        AND: [{ deliveryDate: product.deliveryDate, name: product.name }],
+      },
+    });
+
+    if (productWithSameDeliverDate.length > 0) {
+      return {
+        success: false,
+        message: `Product ${product.name} and deilivery date already exists`,
+      };
+    }
+
+    const { id, ...productWithoutId } = product;
     await prisma.products.create({
       data: {
-        ...product,
+        ...productWithoutId,
         userId: TEMP_USER_ID,
       },
     });

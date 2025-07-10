@@ -9,12 +9,13 @@ import {
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import appCss from '../index.css?url';
-import Loader from '@/components/loader';
 import type { QueryClient } from '@tanstack/react-query';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { SiteHeader } from '@/components/site-header';
-import { AppSidebar } from '@/components/app-sidebar';
+import AppSidebar from '@/components/app-sidebar';
 import DrawerContainer from '@/components/drawer-container';
+import Loader from '@/components/loader';
+import SiteHeader from '@/components/site-header';
+import ModalContainer from '@/components/modal-container';
 
 export interface RouterAppContext {
   queryClient: QueryClient;
@@ -74,6 +75,7 @@ function RootDocument() {
                 </SidebarInset>
               </SidebarProvider>
               <DrawerContainer />
+              <ModalContainer />
             </>
           )}
         </div>
