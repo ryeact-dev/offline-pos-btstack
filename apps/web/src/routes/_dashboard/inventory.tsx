@@ -1,4 +1,4 @@
-import { DataTable } from '@/components/data-table';
+import DataTable from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,21 +8,49 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { openSheet } from '@/store';
-import type { InventoryTableValues } from '@/zod/inventory.validation';
+import { productsQueries } from '@/hooks/inventory.hook';
+import { openModal, openSheet } from '@/store';
+import type { InventoryItemFormValues } from '@/zod/inventory.validation';
 import {
   IconCircleCheckFilled,
   IconDotsVertical,
   IconLoader,
 } from '@tabler/icons-react';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import type { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
 
 export const Route = createFileRoute('/_dashboard/inventory')({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(productsQueries.list());
+  },
   component: RouteComponent,
 });
 
-const columns: ColumnDef<InventoryTableValues>[] = [
+const onAddNewProduct = () => {
+  openSheet({
+    title: 'Product Details',
+    data: {
+      type: 'add-product',
+      data: null,
+    },
+    isSheetOpen: true,
+  });
+};
+
+const onDeleteProductHandler = (product: InventoryItemFormValues) => {
+  openModal({
+    data: {
+      type: 'delete-product',
+      data: { id: product.id, name: product.name },
+    },
+    isModalOpen: true,
+    title: 'Delete Product',
+    // size: 'md',
+  });
+};
+const columns: ColumnDef<InventoryItemFormValues>[] = [
   // {
   //   id: 'drag',
   //   header: () => null,
@@ -80,30 +108,18 @@ const columns: ColumnDef<InventoryTableValues>[] = [
   {
     accessorKey: 'price',
     header: 'Price',
-    cell: ({ row }) => (
-      <div className='w-32'>
-        <Badge variant='outline' className='text-muted-foreground px-1.5'>
-          {row.original.price}
-        </Badge>
-      </div>
-    ),
+    cell: ({ row }) => <p> {row.original.price}</p>,
   },
   {
     accessorKey: 'stockQuantity',
     header: 'Quantity',
-    cell: ({ row }) => (
-      <Badge variant='outline' className='text-muted-foreground px-1.5'>
-        {row.original.stockQuantity}
-      </Badge>
-    ),
+    cell: ({ row }) => <p> {row.original.stockQuantity}</p>,
   },
   {
     accessorKey: 'deliveryDate',
     header: 'Delivery Date',
     cell: ({ row }) => (
-      <Badge variant='outline' className='text-muted-foreground px-1.5'>
-        {row.original.deliveryDate}
-      </Badge>
+      <p> {format(new Date(row.original.deliveryDate), 'dd/MM/yyyy')}</p>
     ),
   },
 
@@ -129,60 +145,21 @@ const columns: ColumnDef<InventoryTableValues>[] = [
           <DropdownMenuItem>Make a copy</DropdownMenuItem>
           <DropdownMenuItem>Favorite</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant='destructive'>Delete</DropdownMenuItem>
+          <DropdownMenuItem
+            variant='destructive'
+            onClick={() => onDeleteProductHandler(row.original)}
+          >
+            Delete
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),
   },
 ];
 
-const data = [
-  {
-    id: 1,
-    name: 'Cover page',
-    category: 'Cover page',
-    price: 18.5,
-    stockQuantity: 10,
-    deliveryDate: new Date().toDateString(),
-  },
-  {
-    id: 2,
-    name: 'Table of contents',
-    category: 'Table of contents',
-    price: 11.25,
-    stockQuantity: 16,
-    deliveryDate: new Date().toDateString(),
-  },
-  {
-    id: 3,
-    name: 'Executive summary',
-    category: 'Narrative',
-    price: 10,
-    stockQuantity: 5,
-    deliveryDate: new Date().toDateString(),
-  },
-  {
-    id: 4,
-    name: 'Technical approach',
-    category: 'Narrative',
-    price: 20.1,
-    stockQuantity: 30,
-    deliveryDate: new Date().toDateString(),
-  },
-];
-
-const onAddNewProduct = () => {
-  openSheet({
-    title: 'Product Details',
-    data: {
-      type: 'add-product',
-      data: null,
-    },
-    isSheetOpen: true,
-  });
-};
-
 function RouteComponent() {
+  const { data } = useSuspenseQuery(productsQueries.list());
+
   return (
     <div className='flex flex-1 flex-col'>
       <div className='@container/main flex flex-1 flex-col gap-2'>

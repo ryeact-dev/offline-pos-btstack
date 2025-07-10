@@ -86,7 +86,6 @@ export interface DefaultDataModalObject {
 }
 
 export type ModalData =
-  // | { type: 'delete-event'; data: DefaultDataModalObject }
   // | { type: 'delete-user'; data: DefaultDataModalObject }
   // | { type: 'delete-candidate'; data: DefaultDataModalObject }
   // | { type: 'delete-competition'; data: DefaultDataModalObject }
@@ -96,6 +95,7 @@ export type ModalData =
   // | { type: 'user'; data: UserWithEventAndCompetitions | null }
   // | { type: 'competition'; data: UserCompetition | null }
   // | { type: 'candidate'; data: CandidateNoCreatedAt | null }
+  | { type: 'delete-product'; data: DefaultDataModalObject }
   | { type: 'add-product'; data: InventoryItemFormValues | null }
   | { type: string; data: Record<string, unknown> };
 
