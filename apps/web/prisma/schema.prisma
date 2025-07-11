@@ -32,16 +32,16 @@ model Users {
 
 model Products {
   id             Int      @id @default(autoincrement())
-  name           String   
+  name           String   @default("")
   price          Decimal  @default(0) @db.Decimal(10, 2)
   description    String   @default("")
-  category       String
-  stockQuantity  Int
-  image64Base    String?
-  sku            String
-  barcode        String
-  expirationDate DateTime
-  deliveryDate   DateTime
+  category       String   @default("medicine")
+  stockQuantity  Int      @default(0)
+  image64Base    String   @default("")
+  sku            String   @default("")
+  barcode        String   @default("")
+  expirationDate DateTime @default(now())
+  deliveryDate   DateTime @default(now())
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -57,10 +57,16 @@ model Products {
 //Create the Product History table to track changes in product inventory
 model ProductHistory {
   id             Int      @id @default(autoincrement())
-  quantityChange Int
-  reason         String
-  previousStock  Int
-  newStock       Int
+  name           String   @default("")
+  price          Decimal  @default(0) @db.Decimal(10, 2)
+  description    String   @default("")
+  category       String   @default("medicine")
+  stockQuantity  Int      @default(0)
+  image64Base    String   @default("")
+  sku            String   @default("")
+  barcode        String   @default("")
+  expirationDate DateTime @default(now())
+  deliveryDate   DateTime @default(now())
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
