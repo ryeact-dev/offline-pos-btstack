@@ -74,7 +74,7 @@ import type React from 'react';
 // Modal Props
 // Create a union type of all possible modal data types
 export interface DefaultDataModalObject {
-  id: string;
+  id: string | number;
   name: string;
 
   // to user role if manager or not ( on admin can update a manager account )

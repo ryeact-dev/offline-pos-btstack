@@ -1,7 +1,7 @@
 import * as z from 'zod';
 
 export const inventoryItemBaseSchema = z.object({
-  id: z.number().optional(),
+  id: z.number(),
   name: z.string().min(6, 'Name is required'),
   price: z.number().min(1, 'Price is required'),
   description: z.string().optional(),
