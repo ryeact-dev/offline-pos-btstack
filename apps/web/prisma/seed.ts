@@ -15,7 +15,6 @@ async function main() {
       role: 'admin',
       fullName: 'Admin User',
       isActive: true,
-      isAdmin: true,
     },
   });
 
