@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import {
   addProductDb,
+  deleteProductDb,
   getAllProductsDb,
 } from '../db-access/inventory.db.access';
 import { inventoryItemBaseSchema } from '@/zod/inventory.validation';
@@ -16,7 +17,14 @@ export const getAllProductsServerFn = createServerFn({ method: 'GET' })
 
 export const addProductServerFn = createServerFn({ method: 'POST' })
   //   .middleware([authenticatedMiddleware])
-  .validator(inventoryItemBaseSchema)
+  .validator(inventoryItemBaseSchema.omit({ id: true }))
   .handler(async ({ data }) => {
     return await addProductDb(data);
+  });
+
+export const deleteProductServerFn = createServerFn({ method: 'POST' })
+  //   .middleware([authenticatedMiddleware])
+  .validator(inventoryItemBaseSchema.pick({ id: true }))
+  .handler(async ({ data }) => {
+    return await deleteProductDb(data.id);
   });

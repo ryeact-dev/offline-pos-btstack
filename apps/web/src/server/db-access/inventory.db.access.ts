@@ -6,15 +6,7 @@ const TEMP_USER_ID = '75a7fd35-2358-4b09-a983-06b7d2b557fa';
 
 export async function getAllProductsDb() {
   try {
-    const products = await prisma.products.findMany({
-      include: {
-        user: {
-          select: {
-            fullName: true,
-          },
-        },
-      },
-    });
+    const products = await prisma.products.findMany({});
 
     const json = JSON.stringify(products, replacer);
 
@@ -33,7 +25,9 @@ export async function getAllProductsDb() {
   }
 }
 
-export async function addProductDb(product: InventoryItemFormValues) {
+export async function addProductDb(
+  product: Omit<InventoryItemFormValues, 'id'>
+) {
   try {
     const productWithSameDeliverDate = await prisma.products.findMany({
       where: {
@@ -48,10 +42,9 @@ export async function addProductDb(product: InventoryItemFormValues) {
       };
     }
 
-    const { id, ...productWithoutId } = product;
     await prisma.products.create({
       data: {
-        ...productWithoutId,
+        ...product,
         userId: TEMP_USER_ID,
       },
     });
@@ -65,6 +58,27 @@ export async function addProductDb(product: InventoryItemFormValues) {
     return {
       success: false,
       message: 'Error adding product',
+    };
+  }
+}
+
+export async function deleteProductDb(productId: number) {
+  try {
+    const deletedProduct = await prisma.products.delete({
+      where: {
+        id: productId,
+      },
+    });
+
+    return {
+      success: true,
+      message: `Product ${deletedProduct.name} deleted successfully`,
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      message: 'Error deleting product',
     };
   }
 }

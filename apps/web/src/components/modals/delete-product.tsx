@@ -1,6 +1,7 @@
 import type { DefaultDataModalObject } from '@/utils/types';
 import React from 'react';
 import ModalFooterButtons from '../modal-footer-buttons';
+import { useDeleteProductMutation } from '@/hooks/inventory.hook';
 
 export default function DeleteProduct({
   data,
@@ -9,11 +10,12 @@ export default function DeleteProduct({
   data: DefaultDataModalObject;
   onClose: () => void;
 }) {
+  const { mutate: deleteProductMutate, isPending: isDeletingProduct } =
+    useDeleteProductMutation(onClose);
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // onClose();
-
-    console.log(data);
+    deleteProductMutate({ id: Number(data.id) });
   };
 
   return (
@@ -23,7 +25,7 @@ export default function DeleteProduct({
         remove all data associated with it
       </div>
 
-      <ModalFooterButtons isLoading={false} />
+      <ModalFooterButtons isLoading={isDeletingProduct} />
     </form>
   );
 }
