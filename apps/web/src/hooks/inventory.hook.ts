@@ -3,6 +3,7 @@ import {
   addProductServerFn,
   deleteProductServerFn,
   getAllProductsServerFn,
+  updateProductServerFn,
 } from '@/server/functions/inventory.serverfn';
 import type { ApiResponse, ErrorWithDataResponse } from '@/utils/types';
 import type { InventoryItemFormValues } from '@/zod/inventory.validation';
@@ -61,7 +62,53 @@ export function useAddProductMutation(reset: () => void, onClose: () => void) {
 
       // Reset form values
       reset();
-      // onClose();
+      onClose();
+    },
+  });
+}
+
+export function useUpdateProductMutation(
+  reset: () => void,
+  onClose: () => void
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    ApiResponse,
+    ErrorWithDataResponse,
+    InventoryItemFormValues
+  >({
+    mutationFn: (data) => updateProductServerFn({ data }),
+
+    onError: ({ data }) => {
+      return toastNotification({
+        toastType: 'error',
+        title: 'Update product',
+        description: data.message,
+      });
+    },
+    onSuccess: (data) => {
+      if (!data.success) {
+        return toastNotification({
+          toastType: 'error',
+          title: 'Update product',
+          description: data.message,
+        });
+      }
+
+      toastNotification({
+        toastType: 'success',
+        title: 'Update product',
+        description: data.message,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [...productsQueries.all, 'list'],
+      });
+
+      // Reset form values
+      reset();
+      onClose();
     },
   });
 }

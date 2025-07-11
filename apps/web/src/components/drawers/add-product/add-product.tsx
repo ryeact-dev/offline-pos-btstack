@@ -26,7 +26,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useAddProductMutation } from '@/hooks/inventory.hook';
+import {
+  useAddProductMutation,
+  useUpdateProductMutation,
+} from '@/hooks/inventory.hook';
 import { cn } from '@/lib/utils';
 import { PRODUCT_CATEGORY } from '@/utils/global-constant';
 import {
@@ -62,7 +65,15 @@ export default function AddProductDrawer({
 }) {
   const form = useForm<InventoryItemFormValues>({
     resolver: zodResolver(inventoryItemBaseSchema),
-    defaultValues: DEFAULT_FORM_VALUES,
+    defaultValues: data
+      ? {
+          ...data,
+          expirationDate: new Date(data.expirationDate),
+          deliveryDate: new Date(data.deliveryDate),
+          stockQuantity: Number(data.stockQuantity),
+          price: Number(data.price),
+        }
+      : DEFAULT_FORM_VALUES,
   });
 
   const onResetFormInputs = () => {
@@ -72,8 +83,15 @@ export default function AddProductDrawer({
   const { mutate: addProductMutate, isPending: isAddingProduct } =
     useAddProductMutation(onResetFormInputs, onClose);
 
+  const { mutate: updateProductMutate, isPending: isUpdatingProduct } =
+    useUpdateProductMutation(onResetFormInputs, onClose);
+
   const onSubmit = (values: InventoryItemFormValues) => {
-    addProductMutate(values);
+    if (data) {
+      updateProductMutate(values);
+    } else {
+      addProductMutate(values);
+    }
   };
 
   return (
@@ -140,6 +158,7 @@ export default function AddProductDrawer({
                   <FormLabel className='my-1'>Category</FormLabel>
                   <Select
                     onValueChange={field.onChange}
+                    value={field.value}
                     // defaultValue={field.value}
                   >
                     <FormControl>
@@ -325,7 +344,7 @@ export default function AddProductDrawer({
         </div>
         <FormErrorComponent errors={form.formState.errors} />
         {/* <Button type='submit'>Submit</Button> */}
-        <DrawerFooterButtons isLoading={isAddingProduct} />
+        <DrawerFooterButtons isLoading={isAddingProduct || isUpdatingProduct} />
       </form>
     </Form>
   );

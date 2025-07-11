@@ -39,6 +39,17 @@ const onAddNewProduct = () => {
   });
 };
 
+const onEditProduct = (data: InventoryItemFormValues) => {
+  openSheet({
+    title: 'Product Details',
+    data: {
+      type: 'add-product',
+      data: data,
+    },
+    isSheetOpen: true,
+  });
+};
+
 const onDeleteProductHandler = (product: InventoryItemFormValues) => {
   openModal({
     data: {
@@ -138,7 +149,7 @@ const columns: ColumnDef<InventoryItemFormValues>[] = [
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-32'>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onEditProduct(row.original)}>
             Edit
             {/* <TableCellViewer item={row.original} /> */}
           </DropdownMenuItem>

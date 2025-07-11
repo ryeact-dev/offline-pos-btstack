@@ -7,3 +7,5 @@ export const PRODUCT_CATEGORY = [
   { value: 'toys', label: 'Toys' },
   { value: 'other', label: 'Other' },
 ];
+
+export const TEMP_USER_ID = '75a7fd35-2358-4b09-a983-06b7d2b557fa';

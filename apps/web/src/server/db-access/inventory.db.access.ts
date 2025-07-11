@@ -1,12 +1,15 @@
 import { replacer } from '@/helpers/server/value-replacer';
 import prisma from '@/lib/prisma';
+import { TEMP_USER_ID } from '@/utils/global-constant';
 import type { InventoryItemFormValues } from '@/zod/inventory.validation';
-
-const TEMP_USER_ID = '75a7fd35-2358-4b09-a983-06b7d2b557fa';
 
 export async function getAllProductsDb() {
   try {
-    const products = await prisma.products.findMany({});
+    const products = await prisma.products.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+    });
 
     const json = JSON.stringify(products, replacer);
 
@@ -29,16 +32,16 @@ export async function addProductDb(
   product: Omit<InventoryItemFormValues, 'id'>
 ) {
   try {
-    const productWithSameDeliverDate = await prisma.products.findMany({
+    const productWithSameDeliverDate = await prisma.products.findFirst({
       where: {
         AND: [{ deliveryDate: product.deliveryDate, name: product.name }],
       },
     });
 
-    if (productWithSameDeliverDate.length > 0) {
+    if (productWithSameDeliverDate) {
       return {
         success: false,
-        message: `Product ${product.name} and deilivery date already exists`,
+        message: `Product ${product.name} and delivery date already exists`,
       };
     }
 
@@ -58,6 +61,72 @@ export async function addProductDb(
     return {
       success: false,
       message: 'Error adding product',
+    };
+  }
+}
+
+export async function updateProductDb(product: InventoryItemFormValues) {
+  try {
+    const productWithSameDeliverDatePromise = await prisma.products.findFirst({
+      where: {
+        AND: [
+          { deliveryDate: product.deliveryDate, name: product.name.trim() },
+        ],
+      },
+    });
+
+    const searchProductUsingIdPromise = prisma.products.findFirst({
+      where: {
+        id: product.id,
+      },
+    });
+
+    const [productWithSameDeliverDate, foundProductById] = await Promise.all([
+      productWithSameDeliverDatePromise,
+      searchProductUsingIdPromise,
+    ]);
+
+    if (
+      productWithSameDeliverDate &&
+      productWithSameDeliverDate.id !== product.id
+    ) {
+      return {
+        success: false,
+        message: `Product ${product.name} and delivery date already exists`,
+      };
+    }
+
+    // Create a copy of the old product in the product history table
+    const productHistoryPromise = prisma.productHistory.create({
+      data: {
+        ...foundProductById,
+        userId: TEMP_USER_ID,
+        productId: product.id,
+      },
+    });
+
+    // Update with new product data
+    const productUpdatePromise = prisma.products.update({
+      where: {
+        id: product.id,
+      },
+      data: {
+        ...product,
+        userId: TEMP_USER_ID,
+      },
+    });
+
+    await prisma.$transaction([productHistoryPromise, productUpdatePromise]);
+
+    return {
+      success: true,
+      message: 'Product successfully updated',
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      success: false,
+      message: 'Error updating product',
     };
   }
 }
