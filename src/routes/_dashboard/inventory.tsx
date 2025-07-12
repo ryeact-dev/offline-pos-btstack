@@ -20,8 +20,9 @@ import { format } from "date-fns";
 import { useCallback } from "react";
 
 export const Route = createFileRoute("/_dashboard/inventory")({
-  validateSearch: (search) => searchBaseSchema.parse(search),
-  loaderDeps: ({ search: { page, filter } }) => ({ page, filter }),
+  validateSearch: (search) =>
+    searchBaseSchema.pick({ filter: true }).parse(search),
+  loaderDeps: ({ search: { filter } }) => ({ filter }),
   loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(productsQueries.list());
   },
@@ -70,8 +71,6 @@ const multiColumnFilterFn: FilterFn<InventoryItemFormValues> = (
 ) => {
   const searchableRowContent = `${row.original.name}`.toLowerCase();
   const searchTerm = (filterValue ?? "").toLowerCase();
-
-  console.log("searchTerm", searchTerm);
 
   return searchableRowContent.includes(searchTerm);
 };
@@ -201,25 +200,22 @@ const columns: ColumnDef<InventoryItemFormValues>[] = [
 function RouteComponent() {
   const navigate = useNavigate();
   const { data } = useSuspenseQuery(productsQueries.list());
-  const { filter, page } = Route.useSearch();
+  const { filter } = Route.useSearch();
 
   const onClear = useCallback(() => {
-    navigate({ to: ".", search: (prev) => ({ ...prev, page: 1, filter: "" }) });
+    navigate({ to: ".", search: (prev) => ({ ...prev, filter: "" }) });
   }, []);
 
-  const onFilterChange = useCallback(
-    (value?: string) => {
-      if (value) {
-        navigate({
-          to: ".",
-          search: (prev) => ({ ...prev, page: 1, filter: value }),
-        });
-      } else {
-        onClear();
-      }
-    },
-    [page],
-  );
+  const onFilterChange = useCallback((value?: string) => {
+    if (value) {
+      navigate({
+        to: ".",
+        search: (prev) => ({ ...prev, filter: value }),
+      });
+    } else {
+      onClear();
+    }
+  }, []);
 
   return (
     <div className="flex flex-1 flex-col">
