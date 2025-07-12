@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   IconCamera,
   IconChartBar,
@@ -15,7 +15,7 @@ import {
   IconSearch,
   IconSettings,
   IconUsers,
-} from '@tabler/icons-react';
+} from "@tabler/icons-react";
 
 import {
   Sidebar,
@@ -25,51 +25,52 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
-import NavMain from './nav-main';
-import NavSecondary from './nav-secondary';
-import NavUser from './nav-user';
+} from "@/components/ui/sidebar";
+import NavMain from "./nav-main";
+import NavSecondary from "./nav-secondary";
+import NavUser from "./nav-user";
 
 const data = {
   user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
     {
-      title: 'Dashboard',
-      url: '/',
+      title: "Dashboard",
+      url: "/",
       // search: {},
       icon: IconDashboard,
     },
     {
-      title: 'Products',
-      url: '/products',
+      title: "Products",
+      url: "/products",
       // search: {},
       icon: IconListDetails,
     },
     {
-      title: 'Transactions',
-      url: '/transactions',
+      title: "Transactions",
+      url: "/transactions",
       icon: IconFolder,
     },
     {
-      title: 'Inventory',
-      url: '/inventory',
+      title: "Inventory",
+      url: "/inventory",
+      search: { filter: "", page: 1 },
       icon: IconChartBar,
     },
     {
-      title: 'Users',
-      url: '/users',
+      title: "Users",
+      url: "/users",
       icon: IconUsers,
     },
   ],
 
   navSecondary: [
     {
-      title: 'Settings',
-      url: '/settings',
+      title: "Settings",
+      url: "/settings",
       icon: IconSettings,
     },
     // {
@@ -85,18 +86,18 @@ const data = {
   ],
   documents: [
     {
-      name: 'Data Library',
-      url: '#',
+      name: "Data Library",
+      url: "#",
       icon: IconDatabase,
     },
     {
-      name: 'Reports',
-      url: '#',
+      name: "Reports",
+      url: "#",
       icon: IconReport,
     },
     {
-      name: 'Word Assistant',
-      url: '#',
+      name: "Word Assistant",
+      url: "#",
       icon: IconFileWord,
     },
   ],
@@ -106,17 +107,17 @@ export default function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible='offcanvas' {...props}>
+    <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className='data-[slot=sidebar-menu-button]:!p-1.5'
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href='#'>
-                <IconInnerShadowTop className='!size-5' />
-                <span className='text-base font-semibold'>Acme Inc.</span>
+              <a href="#">
+                <IconInnerShadowTop className="!size-5" />
+                <span className="text-base font-semibold">Acme Inc.</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -125,7 +126,7 @@ export default function AppSidebar({
       <SidebarContent>
         <NavMain items={data.navMain} />
         {/* <NavDocuments items={data.documents} /> */}
-        <NavSecondary items={data.navSecondary} className='mt-auto' />
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
