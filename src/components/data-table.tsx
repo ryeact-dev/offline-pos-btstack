@@ -190,19 +190,15 @@ export default function DataTable({
             <Input
               id={`${id}-input`}
               ref={inputRef}
-              className={cn(
-                "peer min-w-60 ps-9",
-                Boolean(table.getColumn(inputFilter)?.getFilterValue()) &&
-                  "pe-9",
-              )}
+              className="peer min-w-60 ps-9 pe-9"
               value={filter}
               onChange={(e) => {
                 onFilterChange(e.target.value);
                 // table.getColumn(inputFilter)?.setFilterValue(e.target.value);
               }}
-              placeholder="Filter by name or email..."
+              placeholder="Filter by product name..."
               type="text"
-              aria-label="Filter by name or email"
+              aria-label="Filter by product name"
             />
             <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
               <IconFilter2 size={16} aria-hidden="true" />
