@@ -1,23 +1,4 @@
 import * as React from "react";
-// import {
-//   closestCenter,
-//   DndContext,
-//   KeyboardSensor,
-//   MouseSensor,
-//   TouchSensor,
-//   useSensor,
-//   useSensors,
-//   type DragEndEvent,
-//   type UniqueIdentifier,
-// } from '@dnd-kit/core';
-// import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-// import {
-//   arrayMove,
-//   SortableContext,
-//   useSortable,
-//   verticalListSortingStrategy,
-// } from '@dnd-kit/sortable';
-// import { CSS } from '@dnd-kit/utilities';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -48,7 +29,6 @@ import {
 } from "@tanstack/react-table";
 import { z } from "zod";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -59,13 +39,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Table,
   TableBody,
   TableCell,
@@ -73,18 +46,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import PaginationTable from "./pagination-table";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
-import { debouncer } from "@/helpers/client/debounce";
-import {
-  debounce,
-  useDebouncedValue,
-  useDebouncer,
-} from "@tanstack/react-pacer";
+import { useDebouncedValue } from "@tanstack/react-pacer";
 
 export const schema = z.object({
   id: z.number(),
@@ -95,51 +63,6 @@ export const schema = z.object({
   limit: z.string(),
   reviewer: z.string(),
 });
-
-// Create a separate component for the drag handle
-// function DragHandle({ id }: { id: number }) {
-//   const { attributes, listeners } = useSortable({
-//     id,
-//   });
-
-//   return (
-//     <Button
-//       {...attributes}
-//       {...listeners}
-//       variant='ghost'
-//       size='icon'
-//       className='text-muted-foreground size-7 hover:bg-transparent'
-//     >
-//       <IconGripVertical className='text-muted-foreground size-3' />
-//       <span className='sr-only'>Drag to reorder</span>
-//     </Button>
-//   );
-// }
-
-// function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
-//   const { transform, transition, setNodeRef, isDragging } = useSortable({
-//     id: row.original.id,
-//   });
-
-//   return (
-//     <TableRow
-//       data-state={row.getIsSelected() && 'selected'}
-//       data-dragging={isDragging}
-//       ref={setNodeRef}
-//       className='relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80'
-//       style={{
-//         transform: CSS.Transform.toString(transform),
-//         transition: transition,
-//       }}
-//     >
-//       {row.getVisibleCells().map((cell) => (
-//         <TableCell key={cell.id}>
-//           {flexRender(cell.column.columnDef.cell, cell.getContext())}
-//         </TableCell>
-//       ))}
-//     </TableRow>
-//   );
-// }
 
 export default function DataTable({
   data,
@@ -152,7 +75,6 @@ export default function DataTable({
   onFilterChange,
   onClear,
 }: {
-  // data: z.infer<typeof schema>[];
   columns: ColumnDef<any>[];
   data: any;
   buttonName: string;
@@ -180,17 +102,6 @@ export default function DataTable({
     pageIndex: 0,
     pageSize: 10,
   });
-  // const sortableId = React.useId();
-  // const sensors = useSensors(
-  //   useSensor(MouseSensor, {}),
-  //   useSensor(TouchSensor, {}),
-  //   useSensor(KeyboardSensor, {})
-  // );
-
-  // const dataIds = React.useMemo<UniqueIdentifier[]>(
-  //   () => data?.map(({ id }) => id) || [],
-  //   [data]
-  // );
 
   const table = useReactTable({
     data,
@@ -262,21 +173,6 @@ export default function DataTable({
       .getColumn(columnFilter)
       ?.setFilterValue(newFilterValue.length ? newFilterValue : undefined);
   };
-
-  // function handleDragEnd(event: DragEndEvent) {
-  //   const { active, over } = event;
-  //   if (active && over && active.id !== over.id) {
-  //     setData((data) => {
-  //       const oldIndex = dataIds.indexOf(active.id);
-  //       const newIndex = dataIds.indexOf(over.id);
-  //       return arrayMove(data, oldIndex, newIndex);
-  //     });
-  //   }
-  // }
-
-  // const onInputFilterChange = (value: string) => {
-  //  inputRef.current?.value = value;
-  // };
 
   React.useEffect(() => {
     table.getColumn(inputFilter)?.setFilterValue(debounceValue);
@@ -421,32 +317,8 @@ export default function DataTable({
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         <div className="overflow-hidden rounded-lg border">
-          {/* <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis]}
-            onDragEnd={handleDragEnd}
-            sensors={sensors}
-            id={sortableId}
-          > */}
           <Table>
             <TableHeader className="bg-muted sticky top-0 z-10">
-              {/* {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))} */}
-
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="bg-muted/50">
                   {headerGroup.headers.map((header) => {
@@ -550,7 +422,6 @@ export default function DataTable({
               )}
             </TableBody>
           </Table>
-          {/* </DndContext> */}
         </div>
         <PaginationTable table={table} />
       </TabsContent>

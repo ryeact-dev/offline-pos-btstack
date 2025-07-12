@@ -12,16 +12,12 @@ import { productsQueries } from "@/hooks/inventory.hook";
 import { openModal, openSheet } from "@/store";
 import type { InventoryItemFormValues } from "@/zod/inventory.validation";
 import { searchBaseSchema } from "@/zod/search.validation";
-import {
-  IconCircleCheckFilled,
-  IconDotsVertical,
-  IconLoader,
-} from "@tabler/icons-react";
+import { IconDotsVertical } from "@tabler/icons-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 export const Route = createFileRoute("/_dashboard/inventory")({
   validateSearch: (search) => searchBaseSchema.parse(search),

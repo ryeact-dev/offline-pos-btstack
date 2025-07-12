@@ -1,13 +1,13 @@
-import { replacer } from '@/helpers/server/value-replacer';
-import prisma from '@/lib/prisma';
-import { TEMP_USER_ID } from '@/utils/global-constant';
-import type { InventoryItemFormValues } from '@/zod/inventory.validation';
+import { replacer } from "@/helpers/server/value-replacer";
+import prisma from "@/lib/prisma";
+import { TEMP_USER_ID } from "@/utils/global-constant";
+import type { InventoryItemFormValues } from "@/zod/inventory.validation";
 
 export async function getAllProductsDb() {
   try {
     const products = await prisma.products.findMany({
       orderBy: {
-        name: 'asc',
+        name: "asc",
       },
     });
 
@@ -15,21 +15,21 @@ export async function getAllProductsDb() {
 
     return {
       success: true,
-      message: 'Products successfully fetched',
+      message: "Products successfully fetched",
       products: json,
     };
   } catch (err) {
     console.log(err);
     return {
       success: false,
-      message: 'Error fetching products',
+      message: "Error fetching products",
       products: null,
     };
   }
 }
 
 export async function addProductDb(
-  product: Omit<InventoryItemFormValues, 'id'>
+  product: Omit<InventoryItemFormValues, "id">,
 ) {
   try {
     const productWithSameDeliverDate = await prisma.products.findFirst({
@@ -54,13 +54,13 @@ export async function addProductDb(
 
     return {
       success: true,
-      message: 'Product successfully added',
+      message: "Product successfully added",
     };
   } catch (err) {
     console.log(err);
     return {
       success: false,
-      message: 'Error adding product',
+      message: "Error adding product",
     };
   }
 }
@@ -78,6 +78,9 @@ export async function updateProductDb(product: InventoryItemFormValues) {
     const searchProductUsingIdPromise = prisma.products.findFirst({
       where: {
         id: product.id,
+      },
+      omit: {
+        id: true,
       },
     });
 
@@ -120,13 +123,13 @@ export async function updateProductDb(product: InventoryItemFormValues) {
 
     return {
       success: true,
-      message: 'Product successfully updated',
+      message: "Product successfully updated",
     };
   } catch (err) {
     console.log(err);
     return {
       success: false,
-      message: 'Error updating product',
+      message: "Error updating product",
     };
   }
 }
@@ -147,7 +150,7 @@ export async function deleteProductDb(productId: number) {
     console.log(err);
     return {
       success: false,
-      message: 'Error deleting product',
+      message: "Error deleting product",
     };
   }
 }
