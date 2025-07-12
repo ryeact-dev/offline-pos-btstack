@@ -44,9 +44,9 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Products",
-      url: "/products",
-      // search: {},
+      title: "Menu",
+      url: "/menu",
+      search: { filter: "" },
       icon: IconListDetails,
     },
     {
@@ -57,7 +57,7 @@ const data = {
     {
       title: "Inventory",
       url: "/inventory",
-      search: { filter: "", page: 1 },
+      search: { filter: "" },
       icon: IconChartBar,
     },
     {
