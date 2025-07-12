@@ -132,29 +132,29 @@ const columns: ColumnDef<InventoryItemFormValues>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "category",
-    header: "Category",
+    accessorKey: "unit",
+    header: "Unit",
     cell: ({ row }) => (
       <div className="w-32">
         <Badge
           variant="outline"
           className="text-muted-foreground px-1.5 capitalize"
         >
-          {row.original.category}
+          {row.original.unit}
         </Badge>
       </div>
     ),
     filterFn: statusFilterFn,
   },
   {
-    accessorKey: "price",
-    header: "Price",
-    cell: ({ row }) => <p> {row.original.price}</p>,
-  },
-  {
     accessorKey: "stockQuantity",
     header: "Quantity",
     cell: ({ row }) => <p> {row.original.stockQuantity}</p>,
+  },
+  {
+    accessorKey: "price",
+    header: "Price",
+    cell: ({ row }) => <p> {row.original.price}</p>,
   },
   {
     accessorKey: "deliveryDate",
@@ -230,7 +230,7 @@ function RouteComponent() {
             columns={columns}
             buttonName="Add Product"
             onAddNew={onAddNewProduct}
-            columnFilter="category"
+            columnFilter="unit"
             inputFilter={"name"}
             filter={filter}
             onFilterChange={onFilterChange}
