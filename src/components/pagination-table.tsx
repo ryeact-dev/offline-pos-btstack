@@ -17,11 +17,13 @@ import {
 
 export default function PaginationTable<TData>({
   table,
+  isNeedRowPerPage,
 }: {
   table: Table<TData>;
+  isNeedRowPerPage: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between px-4">
+    <div className="flex items-center justify-center px-4">
       <div className="ml-auto flex items-center gap-2 lg:ml-0">
         <Button
           variant="outline"
@@ -68,29 +70,30 @@ export default function PaginationTable<TData>({
           <IconChevronsRight />
         </Button>
       </div>
-
-      <div className="hidden items-center gap-2 lg:flex">
-        <Label htmlFor="rows-per-page" className="text-sm font-medium">
-          Rows per page
-        </Label>
-        <Select
-          value={`${table.getState().pagination.pageSize}`}
-          onValueChange={(value) => {
-            table.setPageSize(Number(value));
-          }}
-        >
-          <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-            <SelectValue placeholder={table.getState().pagination.pageSize} />
-          </SelectTrigger>
-          <SelectContent side="top">
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <SelectItem key={pageSize} value={`${pageSize}`}>
-                {pageSize}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {isNeedRowPerPage && (
+        <div className="hidden items-center gap-2 lg:flex">
+          <Label htmlFor="rows-per-page" className="text-sm font-medium">
+            Rows per page
+          </Label>
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value));
+            }}
+          >
+            <SelectTrigger size="sm" className="w-20" id="rows-per-page">
+              <SelectValue placeholder={table.getState().pagination.pageSize} />
+            </SelectTrigger>
+            <SelectContent side="top">
+              {[10, 20, 30, 40, 50].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
     </div>
   );
 }
