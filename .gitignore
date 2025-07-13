@@ -53,6 +53,7 @@ next-env.d.ts
 
 # Other
 dev-dist
+dbBackup
 
 .wrangler
 .dev.vars*
