@@ -1,6 +1,6 @@
 // * This drawer is used to add a new product to the inventory
 
-import DrawerFooterButtons from "@/components/draw-footer-buttons";
+import DrawerFooterButtons from "@/components/drawer-footer-buttons";
 import FormErrorComponent from "@/components/form-error-component";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
