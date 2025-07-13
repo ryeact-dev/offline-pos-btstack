@@ -1,6 +1,6 @@
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
-type ToastType = 'success' | 'error' | 'info' | 'warning';
+type ToastType = "success" | "error" | "info" | "warning";
 
 interface ToastNotificationProps {
   title: string;
@@ -11,7 +11,7 @@ interface ToastNotificationProps {
 export const toastNotification = ({
   title,
   description,
-  toastType = 'success',
+  toastType = "success",
 }: ToastNotificationProps) => {
   return toast[toastType](title, { description, duration: 3000 });
 

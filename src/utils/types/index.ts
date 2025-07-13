@@ -1,6 +1,6 @@
-import type { InventoryItemFormValues } from '@/zod/inventory.validation';
-import type { Decimal } from '@prisma/client/runtime/library';
-import type React from 'react';
+import type { InventoryItemFormValues } from "@/zod/inventory.validation";
+import type { Decimal } from "@prisma/client/runtime/library";
+import type React from "react";
 
 // export interface QueryParams {
 //   filter: string
@@ -95,8 +95,8 @@ export type ModalData =
   // | { type: 'user'; data: UserWithEventAndCompetitions | null }
   // | { type: 'competition'; data: UserCompetition | null }
   // | { type: 'candidate'; data: CandidateNoCreatedAt | null }
-  | { type: 'delete-product'; data: DefaultDataModalObject }
-  | { type: 'add-product'; data: InventoryItemFormValues | null }
+  | { type: "delete-product"; data: DefaultDataModalObject }
+  | { type: "add-product"; data: InventoryItemFormValues | null }
   | { type: string; data: Record<string, unknown> };
 
 // export type ModalSize =
