@@ -27,7 +27,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 
@@ -37,7 +36,6 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -46,23 +44,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import PaginationTable from "./pagination-table";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Checkbox } from "./ui/checkbox";
-import { Input } from "./ui/input";
 import { useDebouncedValue } from "@tanstack/react-pacer";
-
-export const schema = z.object({
-  id: z.number(),
-  header: z.string(),
-  type: z.string(),
-  status: z.string(),
-  target: z.string(),
-  limit: z.string(),
-  reviewer: z.string(),
-});
+import TableControlsInventory from "./table-controls/inventory";
 
 export default function DataTable({
   data,
@@ -74,18 +59,23 @@ export default function DataTable({
   filter,
   onFilterChange,
   onClear,
+  isNeedToAdd,
+  pageSize = 10,
+  isNeedRowPerPage = true,
 }: {
   columns: ColumnDef<any>[];
   data: any;
-  buttonName: string;
-  onAddNew: () => void;
+  buttonName?: string;
+  onAddNew?: () => void;
   inputFilter: string;
   columnFilter: string;
   filter: string;
   onFilterChange: (value?: string) => void;
   onClear: () => void;
+  isNeedToAdd: boolean;
+  pageSize?: number;
+  isNeedRowPerPage: boolean;
 }) {
-  const id = React.useId();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [debounceValue, debouncer] = useDebouncedValue(filter, {
     wait: 500, // Wait 500ms after last change
@@ -100,7 +90,7 @@ export default function DataTable({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize,
   });
 
   const table = useReactTable({
@@ -178,140 +168,71 @@ export default function DataTable({
     table.getColumn(inputFilter)?.setFilterValue(debounceValue);
   }, [debounceValue]);
 
+  const onClearInputFilter = () => {
+    onClear();
+    table.getColumn(inputFilter)?.setFilterValue("");
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   return (
-    <Tabs
-      defaultValue="outline"
-      className="w-full flex-col justify-start gap-6"
-    >
-      <div className="flex items-center justify-between px-4 lg:px-6">
-        <div className="flex items-center gap-2">
-          {/* Filter by name or email */}
-          <div className="relative">
-            <Input
-              id={`${id}-input`}
-              ref={inputRef}
-              className="peer min-w-60 ps-9 pe-9"
-              value={filter}
-              onChange={(e) => {
-                onFilterChange(e.target.value);
-                // table.getColumn(inputFilter)?.setFilterValue(e.target.value);
-              }}
-              placeholder="Filter by product name..."
-              type="text"
-              aria-label="Filter by product name"
-            />
-            <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-              <IconFilter2 size={16} aria-hidden="true" />
-            </div>
-            {Boolean(table.getColumn(inputFilter)?.getFilterValue()) && (
-              <button
-                className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-                aria-label="Clear filter"
-                onClick={() => {
-                  onClear();
-                  table.getColumn(inputFilter)?.setFilterValue("");
-                  if (inputRef.current) {
-                    inputRef.current.focus();
-                  }
-                }}
-              >
-                <IconCircleX size={16} aria-hidden="true" />
-              </button>
-            )}
-          </div>
-          {/* Filter by status */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="min-w-36 capitalize">
-                <IconFilter
-                  className="-ms-1 opacity-60"
-                  size={16}
-                  aria-hidden="true"
-                />
-                {columnFilter}
-                {selectedStatuses.length > 0 && (
-                  <span className="bg-background text-muted-foreground/70 -me-1 inline-flex h-5 max-h-full items-center rounded border px-1 font-[inherit] text-[0.625rem] font-medium">
-                    {selectedStatuses.length}
-                  </span>
-                )}
-                <IconChevronDown />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto min-w-36 p-3" align="start">
-              <div className="space-y-3">
-                <div className="text-muted-foreground text-xs font-medium">
-                  Filters
-                </div>
-                <div className="space-y-3">
-                  {uniqueStatusValues.map((value, i) => (
-                    <div key={value} className="flex items-center gap-2">
-                      <Checkbox
-                        id={`${id}-${i}`}
-                        checked={selectedStatuses.includes(value)}
-                        onCheckedChange={(checked: boolean) =>
-                          onColumnFilterChange(checked, value)
+    <div className="w-full flex-col justify-start gap-6 overflow-auto">
+      <div className="flex items-center justify-between gap-4 px-2 lg:px-6">
+        <TableControlsInventory
+          columnFilter={columnFilter}
+          selectedStatuses={selectedStatuses}
+          uniqueStatusValues={uniqueStatusValues}
+          onColumnFilterChange={onColumnFilterChange}
+          statusCounts={statusCounts}
+          filter={filter}
+          onFilterChange={onFilterChange}
+          onClearInputFilter={onClearInputFilter}
+        />
+
+        {isNeedToAdd && (
+          <div className="flex items-center gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <IconLayoutColumns />
+                  <span className="hidden lg:inline">Customize Columns</span>
+                  <span className="lg:hidden">Columns</span>
+                  <IconChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                {table
+                  .getAllColumns()
+                  .filter(
+                    (column) =>
+                      typeof column.accessorFn !== "undefined" &&
+                      column.getCanHide(),
+                  )
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
                         }
-                      />
-                      <Label
-                        htmlFor={`${id}-${i}`}
-                        className="flex grow justify-between gap-2 font-normal capitalize"
                       >
-                        {value}{" "}
-                        <span className="text-muted-foreground ms-2 text-xs">
-                          {statusCounts.get(value)}
-                        </span>
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconLayoutColumns />
-                <span className="hidden lg:inline">Customize Columns</span>
-                <span className="lg:hidden">Columns</span>
-                <IconChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {table
-                .getAllColumns()
-                .filter(
-                  (column) =>
-                    typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide(),
-                )
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.columnDef.header as string}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button variant="outline" size="sm" onClick={onAddNew}>
-            <IconPlus />
-            <span className="hidden lg:inline">{buttonName}</span>
-          </Button>
-        </div>
+                        {column.columnDef.header as string}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button variant="outline" size="sm" onClick={onAddNew}>
+              <IconPlus />
+              <span className="hidden lg:inline">{buttonName}</span>
+            </Button>
+          </div>
+        )}
       </div>
-      <TabsContent
-        value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
+      <div className="relative flex flex-col gap-4 overflow-auto px-4 py-6 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="bg-muted sticky top-0 z-10">
@@ -419,23 +340,8 @@ export default function DataTable({
             </TableBody>
           </Table>
         </div>
-        <PaginationTable table={table} />
-      </TabsContent>
-      <TabsContent
-        value="past-performance"
-        className="flex flex-col px-4 lg:px-6"
-      >
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-      <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-      <TabsContent
-        value="focus-documents"
-        className="flex flex-col px-4 lg:px-6"
-      >
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-    </Tabs>
+        <PaginationTable table={table} isNeedRowPerPage={isNeedRowPerPage} />
+      </div>
+    </div>
   );
 }
