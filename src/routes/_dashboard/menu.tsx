@@ -4,7 +4,9 @@ import Loader from "@/components/loader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { productsQueries } from "@/hooks/inventory.hook";
-import { openModal } from "@/store";
+import { salesQueries } from "@/hooks/cart.hooks";
+import { useDialogStore } from "@/store/dialog-store";
+import { TEMP_USER_ID } from "@/utils/global-constant";
 import type { InventoryItemFormValues } from "@/zod/inventory.validation";
 import { searchBaseSchema } from "@/zod/search.validation";
 import { IconPlus } from "@tabler/icons-react";
@@ -20,6 +22,9 @@ export const Route = createFileRoute("/_dashboard/menu")({
   loaderDeps: ({ search: { filter } }) => ({ filter }),
   loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(productsQueries.list());
+    await context.queryClient.ensureQueryData(
+      salesQueries.single(TEMP_USER_ID),
+    );
   },
   component: RouteComponent,
   ssr: false,
@@ -50,8 +55,14 @@ const statusFilterFn: FilterFn<InventoryItemFormValues> = (
 const PAGE_LIMIT = 15;
 
 function RouteComponent() {
-  const navigate = useNavigate();
+  // Getters
   const { data, isLoading } = useQuery(productsQueries.list());
+  const { data: cart, isLoading: isLoadingOrderList } = useQuery(
+    salesQueries.single(TEMP_USER_ID),
+  );
+
+  const { openModal } = useDialogStore();
+  const navigate = useNavigate();
   const { filter } = Route.useSearch();
 
   const onClear = useCallback(() => {
@@ -69,17 +80,14 @@ function RouteComponent() {
     }
   }, []);
 
-  const onAddCartButtonHandler = (product: InventoryItemFormValues) => {
-    // if (item.quantity <= 0) return;
+  const onAddCartButtonHandler = (item: InventoryItemFormValues) => {
     openModal({
       data: {
         type: "add-order",
-        data: product,
+        data: { cart, item: { ...item, productId: item.id } },
       },
       isModalOpen: true,
       title: "Add Order",
-
-      // size: 'md',
     });
   };
 
@@ -152,7 +160,7 @@ function RouteComponent() {
       {
         accessorKey: "price",
         header: "Price",
-        cell: ({ row }) => <p> P{row.original.price}</p>,
+        cell: ({ row }) => <p> P{Number(row.original.price).toFixed(2)}</p>,
       },
       {
         accessorKey: "deliveryDate",
@@ -176,7 +184,7 @@ function RouteComponent() {
         ),
       },
     ],
-    [],
+    [cart],
   );
 
   if (isLoading) return <Loader />;
@@ -201,7 +209,7 @@ function RouteComponent() {
       </div>
 
       <div className="mt-6 max-h-[865px] flex-1 shrink-0 pr-6 md:w-80 lg:w-96">
-        <CartOrderList />
+        <CartOrderList cart={cart} isLoadingOrderList={isLoadingOrderList} />
       </div>
     </div>
   );
