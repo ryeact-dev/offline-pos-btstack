@@ -1,26 +1,27 @@
-import { toastNotification } from '@/components/toastTotification';
+import { toastNotification } from "@/components/toastTotification";
 import {
   addProductServerFn,
   deleteProductServerFn,
   getAllProductsServerFn,
   updateProductServerFn,
-} from '@/server/functions/inventory.serverfn';
-import type { ApiResponse, ErrorWithDataResponse } from '@/utils/types';
-import type { InventoryItemFormValues } from '@/zod/inventory.validation';
+} from "@/server/functions/inventory.serverfn";
+import type { ApiResponse, ErrorWithDataResponse } from "@/utils/types";
+import type { InventoryItemFormValues } from "@/zod/inventory.validation";
 import {
   queryOptions,
   useMutation,
   useQueryClient,
-} from '@tanstack/react-query';
+} from "@tanstack/react-query";
 
 export const productsQueries = {
-  all: ['products'] as const,
+  all: ["products"] as const,
   list: () =>
     queryOptions<Array<InventoryItemFormValues>>({
-      queryKey: [...productsQueries.all, 'list'],
+      queryKey: [...productsQueries.all, "list"],
       queryFn: () => getAllProductsServerFn(),
       placeholderData: (previewData) => previewData,
       retry: 1,
+      // refetchInterval: 1000 * 3,
     }),
 };
 
@@ -36,28 +37,28 @@ export function useAddProductMutation(reset: () => void, onClose: () => void) {
 
     onError: ({ data }) => {
       return toastNotification({
-        toastType: 'error',
-        title: 'Add product',
+        toastType: "error",
+        title: "Add product",
         description: data.message,
       });
     },
     onSuccess: (data) => {
       if (!data.success) {
         return toastNotification({
-          toastType: 'error',
-          title: 'Add product',
+          toastType: "error",
+          title: "Add product",
           description: data.message,
         });
       }
 
       toastNotification({
-        toastType: 'success',
-        title: 'Add product',
+        toastType: "success",
+        title: "Add product",
         description: data.message,
       });
 
       queryClient.invalidateQueries({
-        queryKey: [...productsQueries.all, 'list'],
+        queryKey: [...productsQueries.all, "list"],
       });
 
       // Reset form values
@@ -69,7 +70,7 @@ export function useAddProductMutation(reset: () => void, onClose: () => void) {
 
 export function useUpdateProductMutation(
   reset: () => void,
-  onClose: () => void
+  onClose: () => void,
 ) {
   const queryClient = useQueryClient();
 
@@ -82,28 +83,28 @@ export function useUpdateProductMutation(
 
     onError: ({ data }) => {
       return toastNotification({
-        toastType: 'error',
-        title: 'Update product',
+        toastType: "error",
+        title: "Update product",
         description: data.message,
       });
     },
     onSuccess: (data) => {
       if (!data.success) {
         return toastNotification({
-          toastType: 'error',
-          title: 'Update product',
+          toastType: "error",
+          title: "Update product",
           description: data.message,
         });
       }
 
       toastNotification({
-        toastType: 'success',
-        title: 'Update product',
+        toastType: "success",
+        title: "Update product",
         description: data.message,
       });
 
       queryClient.invalidateQueries({
-        queryKey: [...productsQueries.all, 'list'],
+        queryKey: [...productsQueries.all, "list"],
       });
 
       // Reset form values
@@ -121,28 +122,28 @@ export function useDeleteProductMutation(onClose: () => void) {
 
     onError: ({ data }) => {
       return toastNotification({
-        toastType: 'error',
-        title: 'Delete product',
+        toastType: "error",
+        title: "Delete product",
         description: data.message,
       });
     },
     onSuccess: (data) => {
       if (!data.success) {
         return toastNotification({
-          toastType: 'error',
-          title: 'Delete product',
+          toastType: "error",
+          title: "Delete product",
           description: data.message,
         });
       }
 
       toastNotification({
-        toastType: 'success',
-        title: 'Delete product',
+        toastType: "success",
+        title: "Delete product",
         description: data.message,
       });
 
       queryClient.invalidateQueries({
-        queryKey: [...productsQueries.all, 'list'],
+        queryKey: [...productsQueries.all, "list"],
       });
 
       onClose();

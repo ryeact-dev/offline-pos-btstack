@@ -2,7 +2,6 @@ import type { OrderDetails } from "@/utils/types";
 import React from "react";
 import ModalFooterButtons from "../modal-footer-buttons";
 import { Separator } from "../ui/separator";
-import { useCartStore } from "@/store/cart-store";
 // import { useCheckOutSalesMutation } from "@/hooks/cart.hooks";
 
 export default function CheckOutOrder({
@@ -15,7 +14,7 @@ export default function CheckOutOrder({
   // const { mutate: addSalesMutate, isPending: isAddingSales } =
   // useCheckOutSalesMutation(onClose);
 
-  const itemCount = useCartStore((state) => state.itemCount());
+  // const itemCount = useCartStore((state) => state.itemCount());
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,7 +26,7 @@ export default function CheckOutOrder({
     <form onSubmit={onSubmit}>
       <div>
         <h2 className="mb-1 text-xl font-medium">
-          Check out {itemCount} items?
+          {/* Check out {itemCount} items? */}
         </h2>
         {/* <Separator className="my-3" /> */}
         <p>Subtotal: P{item.subTotal.toFixed(2)}</p>
