@@ -85,6 +85,28 @@ export interface DefaultDataModalObject {
   username?: string;
 }
 
+export interface CartItem extends InventoryItemFormValues {
+  quantity: number;
+  productId: number;
+  total: number;
+}
+
+export interface OrderDetails {
+  id: number;
+  items: CartItem[];
+  subTotal: number;
+  tax: number;
+  totalWithTax: number;
+  paymentMethod: string;
+  customerName: string;
+  status: string;
+}
+
+export interface AddProductModalData {
+  cart: OrderDetails | null;
+  item: CartItem;
+}
+
 export type ModalData =
   // | { type: 'delete-user'; data: DefaultDataModalObject }
   // | { type: 'delete-candidate'; data: DefaultDataModalObject }
@@ -95,8 +117,10 @@ export type ModalData =
   // | { type: 'user'; data: UserWithEventAndCompetitions | null }
   // | { type: 'competition'; data: UserCompetition | null }
   // | { type: 'candidate'; data: CandidateNoCreatedAt | null }
+  | { type: "checkout-order"; data: OrderDetails }
+  | { type: "clear-cart"; data: DefaultDataModalObject }
   | { type: "delete-product"; data: DefaultDataModalObject }
-  | { type: "add-product"; data: InventoryItemFormValues | null }
+  | { type: "add-product"; data: AddProductModalData | null }
   | { type: string; data: Record<string, unknown> };
 
 // export type ModalSize =
