@@ -1,25 +1,32 @@
 import React, { useCallback, useState } from "react";
 import ModalFooterButtons from "../modal-footer-buttons";
-import type { InventoryItemFormValues } from "@/zod/inventory.validation";
 import { Input } from "../ui/input";
 import { toastNotification } from "../toastTotification";
-import { useCartStore } from "@/store/cart-store";
+import type { AddProductModalData } from "@/utils/types";
+import {
+  useCreateCartMutation,
+  useUpdateCartMutation,
+} from "@/hooks/cart.hooks";
+import { computeItemTotal } from "@/helpers/client/computeItemTotal";
 
 export default function AddOrder({
-  data: product,
+  data,
   onClose,
 }: {
-  data: InventoryItemFormValues;
+  data: AddProductModalData;
   onClose: () => void;
 }) {
-  const [quantity, setQuantity] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(1);
 
-  // Cart Getters
-  const cart = useCartStore((state) => state.cartItems);
+  const { cart, item } = data;
 
-  // Cart Mutations
-  const updateQuantity = useCartStore((state) => state.updateCartItem);
-  const addToCart = useCartStore((state) => state.addToCart);
+  console.log(cart);
+
+  // Mutations
+  const { mutate: createCartMutate, isPending: isCreatingCart } =
+    useCreateCartMutation(onClose);
+  const { mutate: updateCartMutate, isPending: isUpdatingCart } =
+    useUpdateCartMutation(onClose);
 
   const onInputChangeHanlder = useCallback((value: number) => {
     setQuantity(value);
@@ -32,28 +39,95 @@ export default function AddOrder({
       toastNotification({
         toastType: "warning",
         title: "Ordering Item",
-        description: `Please enter valid order quantity ${product.name} `,
+        description: `Please enter valid order quantity ${item.name} `,
       });
       return;
     }
 
-    if (product.stockQuantity - quantity <= 0) {
-      toastNotification({
-        toastType: "warning",
-        title: "Ordering Item",
-        description: `Quantity ordered for ${product.name} was exceeded`,
-      });
-      return;
-    }
+    const { subTotal, tax, totalWithTax } = computeItemTotal(
+      Number(item.price),
+      quantity,
+    );
 
-    const existingItemIndex = cart.findIndex((item) => item.id === product.id);
+    if (!cart) {
+      if (quantity > item.stockQuantity) {
+        toastNotification({
+          toastType: "warning",
+          title: "Ordering Item",
+          description: `Quantity ordered for ${item.name} was exceeded`,
+        });
+        return;
+      }
 
-    if (existingItemIndex < 0) {
-      addToCart({ ...product, stockQuantity: quantity });
+      const orderDetails = {
+        subTotal,
+        tax,
+        totalWithTax,
+
+        item: {
+          name: item.name,
+          price: Number(item.price),
+          quantity,
+          total: subTotal,
+          itemStockQuantity: item.stockQuantity - quantity,
+          productId: item.productId,
+        },
+      };
+
+      createCartMutate(orderDetails);
     } else {
-      updateQuantity(cart[existingItemIndex].id, {
-        stockQuantity: cart[existingItemIndex].stockQuantity + quantity,
-      });
+      const cartItems = cart.items;
+      const existingItemIndex = cartItems.findIndex(
+        (i) => i.productId === item.productId,
+      );
+
+      const cartItem = cartItems[existingItemIndex];
+      const cartItemQuantity = cartItem ? Number(cartItem.quantity) : 0;
+
+      if (cartItemQuantity + quantity > item.stockQuantity) {
+        toastNotification({
+          toastType: "warning",
+          title: "Ordering Item",
+          description: `Quantity ordered for ${item.name} was exceeded`,
+        });
+        return;
+      }
+
+      const { subTotal, tax, totalWithTax } = computeItemTotal(
+        Number(cartItem ? cartItem.price : item.price),
+        quantity,
+      );
+
+      let itemOrder = {
+        id: 0,
+        name: item.name,
+        price: Number(item.price),
+        quantity: quantity,
+        total: subTotal,
+        productId: item.productId,
+        itemStockQuantity: item.stockQuantity - quantity,
+      };
+
+      if (cartItem) {
+        itemOrder = {
+          ...itemOrder,
+          id: cartItem.id,
+          quantity: Number(cartItem.quantity) + quantity,
+          total: Number(cartItem.total) + subTotal,
+          itemStockQuantity: item.stockQuantity - quantity,
+        };
+      }
+
+      const orderDetails = {
+        id: cart.id,
+        subTotal: Number(cart.subTotal) + subTotal,
+        tax: Number(cart.tax) + tax,
+        totalWithTax: Number(cart.totalWithTax) + totalWithTax,
+        item: itemOrder,
+        action: "update",
+      };
+
+      updateCartMutate(orderDetails);
     }
 
     onClose();
@@ -62,16 +136,19 @@ export default function AddOrder({
   return (
     <form onSubmit={onSubmit}>
       <div>
-        <h2>{product.name}</h2>
-        <p>{product.stockQuantity}</p>
+        <h2>{item.name}</h2>
+        <p>{item.stockQuantity}</p>
       </div>
       <div>
         <Input
           value={quantity}
           onChange={(e) => onInputChangeHanlder(Number(e.target.value))}
+          type="number"
+          min={0}
+          max={item.stockQuantity}
         />
       </div>
-      <ModalFooterButtons isLoading={false} />
+      <ModalFooterButtons isLoading={isCreatingCart || isUpdatingCart} />
     </form>
   );
 }
