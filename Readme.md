@@ -1,4 +1,4 @@
-# 🧾 Offline POS (Point of Sale) — BetterStack Edition
+# 🧾 Offline POS (Point of Sale)
 
 Welcome to the **Offline POS System**, built with modern web technologies and designed for performance, reliability, and offline capability. This project is perfect for small businesses and entrepreneurs who need a lightweight and responsive POS system that doesn't rely on continuous internet access.
 
