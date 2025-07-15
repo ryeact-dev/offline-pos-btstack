@@ -1,5 +1,3 @@
-import { useStore } from "@tanstack/react-store";
-import { closeModal, modalStore } from "@/store";
 import {
   Dialog,
   DialogContent,
@@ -8,13 +6,20 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import DeleteProduct from "./modals/delete-product";
-import type { DefaultDataModalObject } from "@/utils/types";
+import type {
+  AddProductModalData,
+  DefaultDataModalObject,
+  OrderDetails,
+} from "@/utils/types";
 import AddOrder from "./modals/add-order";
-import type { InventoryItemFormValues } from "@/zod/inventory.validation";
-import { ClientOnly } from "@tanstack/react-router";
+import { useDialogStore } from "@/store/dialog-store";
+import CheckOutOrder from "./modals/check-out-order";
+import ClearCart from "./modals/clear-cart";
 
 export default function ModalContainer() {
-  const { isModalOpen, data, title } = useStore(modalStore);
+  const { modal, closeModal } = useDialogStore();
+
+  const { isModalOpen, data, title } = modal;
 
   let body = <div />;
 
@@ -31,7 +36,22 @@ export default function ModalContainer() {
     case "add-order":
       body = (
         <AddOrder
-          data={data.data as InventoryItemFormValues}
+          data={data.data as unknown as AddProductModalData}
+          onClose={closeModal}
+        />
+      );
+      break;
+
+    case "checkout-order":
+      body = (
+        <CheckOutOrder data={data.data as OrderDetails} onClose={closeModal} />
+      );
+      break;
+
+    case "clear-cart":
+      body = (
+        <ClearCart
+          data={data.data as DefaultDataModalObject}
           onClose={closeModal}
         />
       );
@@ -42,16 +62,14 @@ export default function ModalContainer() {
   }
 
   return (
-    <ClientOnly>
-      <Dialog open={isModalOpen}>
-        <DialogContent showCloseButton={false}>
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription />
-          </DialogHeader>
-          <div>{body}</div>
-        </DialogContent>
-      </Dialog>
-    </ClientOnly>
+    <Dialog open={isModalOpen}>
+      <DialogContent showCloseButton={false}>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription />
+        </DialogHeader>
+        <div>{body}</div>
+      </DialogContent>
+    </Dialog>
   );
 }

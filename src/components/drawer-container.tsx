@@ -1,27 +1,25 @@
-import { closeSheet, sheetStore } from '@/store';
-import { useStore } from '@tanstack/react-store';
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from './ui/drawer';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Button } from './ui/button';
-import AddProductDrawer from './drawers/add-product/add-product';
-import type { InventoryItemFormValues } from '@/zod/inventory.validation';
+} from "./ui/drawer";
+import { useIsMobile } from "@/hooks/use-mobile";
+import AddProductDrawer from "./drawers/add-product/add-product";
+import type { InventoryItemFormValues } from "@/zod/inventory.validation";
+import { useDialogStore } from "@/store/dialog-store";
 
 export default function DrawerContainer() {
-  const { isSheetOpen, data, title } = useStore(sheetStore);
+  const { sheet, closeSheet } = useDialogStore();
   const isMobile = useIsMobile();
 
   let body = <div>Default Body</div>;
 
+  const { isSheetOpen, title, data } = sheet;
+
   switch (data.type) {
-    case 'add-product':
+    case "add-product":
       body = (
         <AddProductDrawer
           data={data.data as InventoryItemFormValues}
@@ -74,14 +72,14 @@ export default function DrawerContainer() {
     <Drawer
       open={isSheetOpen}
       dismissible={isMobile}
-      direction={isMobile ? 'bottom' : 'right'}
+      direction={isMobile ? "bottom" : "right"}
     >
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription />
         </DrawerHeader>
-        <div className='flex flex-col gap-4 overflow-y-auto px-4 text-sm h-full'>
+        <div className="flex h-full flex-col gap-4 overflow-y-auto px-4 text-sm">
           {body}
         </div>
       </DrawerContent>

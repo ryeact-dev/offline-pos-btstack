@@ -1,13 +1,15 @@
 import { DrawerClose, DrawerFooter } from "./ui/drawer";
 import { Button } from "./ui/button";
-import { closeSheet } from "@/store";
 import { IconSend, IconX } from "@tabler/icons-react";
+import { useDialogStore } from "@/store/dialog-store";
 
 export default function DrawerFooterButtons({
   isLoading,
 }: {
   isLoading: boolean;
 }) {
+  const closeSheet = useDialogStore((s) => s.closeSheet);
+
   return (
     <DrawerFooter className="p-0">
       <Button type="submit" disabled={isLoading}>

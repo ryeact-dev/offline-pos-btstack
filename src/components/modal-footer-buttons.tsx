@@ -1,27 +1,29 @@
-import { Button } from './ui/button';
-import { closeModal } from '@/store';
-import { IconSend, IconX } from '@tabler/icons-react';
-import { DialogClose, DialogFooter } from './ui/dialog';
+import { Button } from "./ui/button";
+import { IconSend, IconX } from "@tabler/icons-react";
+import { DialogClose, DialogFooter } from "./ui/dialog";
+import { useDialogStore } from "@/store/dialog-store";
 
 export default function ModalFooterButtons({
   isLoading,
 }: {
   isLoading: boolean;
 }) {
+  const closeModal = useDialogStore((s) => s.closeModal);
+
   return (
-    <DialogFooter className='p-0 flex flex-row gap-4 justify-end mt-6'>
+    <DialogFooter className="mt-6 flex flex-row justify-end gap-4 p-0">
       <DialogClose asChild>
         <Button
-          type='button'
+          type="button"
           onClick={closeModal}
           disabled={isLoading}
-          variant='outline'
+          variant="outline"
         >
-          <IconX className='size-4' /> Close
+          <IconX className="size-4" /> Close
         </Button>
       </DialogClose>
-      <Button type='submit' disabled={isLoading}>
-        <IconSend className='size-4' />
+      <Button type="submit" disabled={isLoading}>
+        <IconSend className="size-4" />
         Confirm
       </Button>
     </DialogFooter>
