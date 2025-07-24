@@ -6,9 +6,7 @@ import type { InventoryItemFormValues } from "@/zod/inventory.validation";
 export async function getAllProductsDb() {
   try {
     const products = await prisma.products.findMany({
-      orderBy: {
-        name: "asc",
-      },
+      orderBy: [{ name: "asc" }, { deliveryDate: "asc" }],
     });
 
     const json = JSON.stringify(products, replacer);
