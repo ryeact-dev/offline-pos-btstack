@@ -7,7 +7,7 @@ import {
   useCreateCartMutation,
   useUpdateCartMutation,
 } from "@/hooks/cart.hooks";
-import { computeItemTotal } from "@/helpers/client/computeItemTotal";
+import { computeItemTotal } from "@/helpers/client/compute-item-total";
 
 export default function AddOrder({
   data,
@@ -84,10 +84,12 @@ export default function AddOrder({
       const cartItem = cartItems[existingItemIndex];
       const cartItemQuantity = cartItem ? Number(cartItem.quantity) : 0;
 
-      if (cartItemQuantity + quantity > item.stockQuantity) {
+      console.log(cartItemQuantity, quantity, item.stockQuantity);
+
+      if (quantity > item.stockQuantity) {
         toastNotification({
           toastType: "warning",
-          title: "Ordering Item",
+          title: "Ordering Itemss",
           description: `Quantity ordered for ${item.name} was exceeded`,
         });
         return;
