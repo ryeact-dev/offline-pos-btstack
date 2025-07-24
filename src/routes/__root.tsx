@@ -71,7 +71,7 @@ function RootDocument() {
           <DrawerContainer />
           <ModalContainer />
         </div>
-        <Toaster richColors />
+        <Toaster richColors position="top-center" />
         <TanStackRouterDevtools position="bottom-left" />
         <Scripts />
       </body>
