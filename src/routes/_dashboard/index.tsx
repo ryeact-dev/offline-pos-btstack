@@ -1,39 +1,39 @@
-import { ChartAreaInteractive } from '@/components/chart-area-interactive';
-import DataTable from '@/components/data-table';
-import { createFileRoute } from '@tanstack/react-router';
+import { ChartAreaInteractive } from "@/components/chart-area-interactive";
+import DataTable from "@/components/data-table";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_dashboard/')({
+export const Route = createFileRoute("/_dashboard/")({
   component: HomeComponent,
 });
 
-import data from '@/lib/data.json';
-import type { DashboardTable } from '@/zod/table.validation';
-import type { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '@/components/ui/badge';
+import data from "@/lib/data.json";
+import type { DashboardTable } from "@/zod/table.validation";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
 import {
   IconCircleCheckFilled,
   IconDotsVertical,
   IconLoader,
-} from '@tabler/icons-react';
-import { toast } from 'sonner';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+} from "@tabler/icons-react";
+import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import SectionCards from '@/components/section-cards';
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import SectionCards from "@/components/section-cards";
 
 const columns: ColumnDef<DashboardTable>[] = [
   // {
@@ -68,11 +68,11 @@ const columns: ColumnDef<DashboardTable>[] = [
   //   enableHiding: false,
   // },
   {
-    accessorKey: 'header',
-    header: 'Header',
+    accessorKey: "header",
+    header: "Header",
     cell: ({ row }) => {
       return (
-        <div className='text-foreground w-fit px-0 text-left'>
+        <div className="text-foreground w-fit px-0 text-left">
           {row.original.header}
         </div>
       );
@@ -80,23 +80,23 @@ const columns: ColumnDef<DashboardTable>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'type',
-    header: 'Section Type',
+    accessorKey: "type",
+    header: "Section Type",
     cell: ({ row }) => (
-      <div className='w-32'>
-        <Badge variant='outline' className='text-muted-foreground px-1.5'>
+      <div className="w-32">
+        <Badge variant="outline" className="text-muted-foreground px-1.5">
           {row.original.type}
         </Badge>
       </div>
     ),
   },
   {
-    accessorKey: 'status',
-    header: 'Status',
+    accessorKey: "status",
+    header: "Status",
     cell: ({ row }) => (
-      <Badge variant='outline' className='text-muted-foreground px-1.5'>
-        {row.original.status === 'Done' ? (
-          <IconCircleCheckFilled className='fill-green-500 dark:fill-green-400' />
+      <Badge variant="outline" className="text-muted-foreground px-1.5">
+        {row.original.status === "Done" ? (
+          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
         ) : (
           <IconLoader />
         )}
@@ -105,32 +105,32 @@ const columns: ColumnDef<DashboardTable>[] = [
     ),
   },
   {
-    accessorKey: 'target',
-    header: 'Target',
+    accessorKey: "target",
+    header: "Target",
     cell: ({ row }) => {
       return (
-        <div className='text-foreground w-fit px-0 text-left'>
+        <div className="text-foreground w-fit px-0 text-left">
           {row.original.target}
         </div>
       );
     },
   },
   {
-    accessorKey: 'limit',
-    header: 'Limit',
+    accessorKey: "limit",
+    header: "Limit",
     cell: ({ row }) => {
       return (
-        <div className='text-foreground w-fit px-0 text-left'>
+        <div className="text-foreground w-fit px-0 text-left">
           {row.original.limit}
         </div>
       );
     },
   },
   {
-    accessorKey: 'reviewer',
-    header: 'Reviewer',
+    accessorKey: "reviewer",
+    header: "Reviewer",
     cell: ({ row }) => {
-      const isAssigned = row.original.reviewer !== 'Assign reviewer';
+      const isAssigned = row.original.reviewer !== "Assign reviewer";
 
       if (isAssigned) {
         return row.original.reviewer;
@@ -138,20 +138,20 @@ const columns: ColumnDef<DashboardTable>[] = [
 
       return (
         <>
-          <Label htmlFor={`${row.original.id}-reviewer`} className='sr-only'>
+          <Label htmlFor={`${row.original.id}-reviewer`} className="sr-only">
             Reviewer
           </Label>
           <Select>
             <SelectTrigger
-              className='w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate'
-              size='sm'
+              className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
+              size="sm"
               id={`${row.original.id}-reviewer`}
             >
-              <SelectValue placeholder='Assign reviewer' />
+              <SelectValue placeholder="Assign reviewer" />
             </SelectTrigger>
-            <SelectContent align='end'>
-              <SelectItem value='Eddie Lake'>Eddie Lake</SelectItem>
-              <SelectItem value='Jamik Tashpulatov'>
+            <SelectContent align="end">
+              <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
+              <SelectItem value="Jamik Tashpulatov">
                 Jamik Tashpulatov
               </SelectItem>
             </SelectContent>
@@ -161,20 +161,20 @@ const columns: ColumnDef<DashboardTable>[] = [
     },
   },
   {
-    id: 'actions',
+    id: "actions",
     cell: ({ row }) => (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant='ghost'
-            className='data-[state=open]:bg-muted text-muted-foreground flex size-8'
-            size='icon'
+            variant="ghost"
+            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+            size="icon"
           >
             <IconDotsVertical />
-            <span className='sr-only'>Open menu</span>
+            <span className="sr-only">Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align='end' className='w-32'>
+        <DropdownMenuContent align="end" className="w-32">
           <DropdownMenuItem>
             Edit
             {/* <TableCellViewer item={row.original} /> */}
@@ -182,7 +182,7 @@ const columns: ColumnDef<DashboardTable>[] = [
           <DropdownMenuItem>Make a copy</DropdownMenuItem>
           <DropdownMenuItem>Favorite</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant='destructive'>Delete</DropdownMenuItem>
+          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),
@@ -191,14 +191,14 @@ const columns: ColumnDef<DashboardTable>[] = [
 
 function HomeComponent() {
   return (
-    <div className='flex flex-1 flex-col'>
-      <div className='@container/main flex flex-1 flex-col gap-2'>
-        <div className='flex flex-col gap-4 py-4 md:gap-6 md:py-6'>
+    <div className="flex flex-1 flex-col">
+      <div className="@container/main flex flex-1 flex-col gap-2">
+        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
           <SectionCards />
-          <div className='px-4 lg:px-6'>
+          <div className="px-4 lg:px-6">
             <ChartAreaInteractive />
           </div>
-          <DataTable data={data} columns={columns} />
+          {/* <DataTable data={data} columns={columns} /> */}
         </div>
       </div>
     </div>
