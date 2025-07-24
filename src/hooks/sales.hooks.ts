@@ -1,44 +1,38 @@
-// import { toastNotification } from "@/components/toastTotification";
-// import {
-//   addSalesServerFn,
-//   checkoutSalesServerFn,
-//   deleteSalesServerFn,
-//   getUserOrderServerFn,
-//   updateSalesServerFn,
-// } from "@/server/functions/sales.serverfn";
-// import type {
-//   ApiResponse,
-//   ErrorWithDataResponse,
-//   OrderDetails,
-// } from "@/utils/types";
-// import {
-//   queryOptions,
-//   useMutation,
-//   useQueryClient,
-// } from "@tanstack/react-query";
-// import { productsQueries } from "./inventory.hook";
-// import type {
-//   AddOrderItemValues,
-//   UpdateOrderItemValues,
-// } from "@/zod/products.validation";
+import { toastNotification } from "@/components/toastTotification";
+import type {
+  ApiResponse,
+  ErrorWithDataResponse,
+  OrderDetails,
+  TransactionDetails,
+} from "@/utils/types";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import type {
+  AddOrderItemValues,
+  UpdateOrderItemValues,
+} from "@/zod/products.validation";
+import { getAllSalesServerFn } from "@/server/functions/sales.serverfn";
 
-// export const salesQueries = {
-//   all: ["sales"] as const,
-//   // list: () =>
-//   //   queryOptions<OrderDetails[]>({
-//   //     queryKey: [...productsQueries.all, 'list'],
-//   //     queryFn: () => getAllProductsServerFn(),
-//   //     placeholderData: (previewData) => previewData,
-//   //     retry: 1,
-//   //   }),
-//   single: (userId: string, status: string = "incomplete") =>
-//     queryOptions<OrderDetails>({
-//       queryKey: [...salesQueries.all, "single"],
-//       queryFn: () => getUserOrderServerFn({ data: { id: userId, status } }),
-//       placeholderData: (previewData) => previewData,
-//       retry: 1,
-//     }),
-// };
+export const salesQueries = {
+  all: ["sales"] as const,
+  list: () =>
+    queryOptions<TransactionDetails[]>({
+      queryKey: [...salesQueries.all, "list"],
+      queryFn: () => getAllSalesServerFn(),
+      placeholderData: (previewData) => previewData,
+      retry: 1,
+    }),
+  //   single: (userId: string, status: string = "incomplete") =>
+  //     queryOptions<OrderDetails>({
+  //       queryKey: [...salesQueries.all, "single"],
+  //       queryFn: () => getUserOrderServerFn({ data: { id: userId, status } }),
+  //       placeholderData: (previewData) => previewData,
+  //       retry: 1,
+  //     }),
+};
 
 // export function useCreateCartMutation(onClose: () => void) {
 //   const queryClient = useQueryClient();
