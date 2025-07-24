@@ -10,6 +10,7 @@ import {
 import { userBaseSchema } from "@/zod/user.validation";
 import {
   addOrderItemSchema,
+  checkOutOrderSchema,
   getIncompleteOrderSchema,
   updateOrderItemSchema,
 } from "@/zod/products.validation";
@@ -53,9 +54,9 @@ export const updateCartServerFn = createServerFn({ method: "POST" })
 
 export const checkoutCartServerFn = createServerFn({ method: "POST" })
   //   .middleware([authenticatedMiddleware])
-  .validator(updateOrderItemSchema.pick({ id: true }))
+  .validator(checkOutOrderSchema)
   .handler(async ({ data }) => {
-    return await checkOutCartsDb(data.id, "Admin");
+    return await checkOutCartsDb(data);
   });
 
 export const deleteCartItemServerFn = createServerFn({ method: "POST" })
