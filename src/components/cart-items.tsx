@@ -3,7 +3,8 @@ import { IconMinus, IconPlus, IconTrash } from "@tabler/icons-react";
 import { toastNotification } from "./toastTotification";
 import type { CartItem, OrderDetails } from "@/utils/types";
 import type { UpdateOrderItemValues } from "@/zod/products.validation";
-import { computeItemTotal } from "@/helpers/client/computeItemTotal";
+import { computeItemTotal } from "@/helpers/client/compute-item-total";
+import { pesoPriceFormat } from "@/helpers/client/price-formats";
 
 interface CartItemProps {
   cart: OrderDetails;
@@ -17,14 +18,14 @@ export default function CartItems({
   onClearCartHandler,
 }: CartItemProps) {
   const onMinusClick = (item: CartItem, quantity: number) => {
-    if (item.stockQuantity - quantity < 0) {
-      toastNotification({
-        toastType: "warning",
-        title: "Ordering Item",
-        description: `Quantity ordered for ${item.name} was exceeded`,
-      });
-      return;
-    }
+    // if (item.stockQuantity - quantity < 0) {
+    //   toastNotification({
+    //     toastType: "warning",
+    //     title: "Ordering Item",
+    //     description: `Quantity ordered for ${item.name} was exceeded`,
+    //   });
+    //   return;
+    // }
 
     const { subTotal, tax, totalWithTax } = computeItemTotal(
       Number(item.price),
@@ -144,7 +145,7 @@ export default function CartItems({
           {item.name} - <span className="capitalize">{item.unit}</span>{" "}
         </h4>
         <p className="text-muted-foreground -mt-1 mb-1 text-sm">
-          P{Number(item.price).toFixed(2)}
+          {pesoPriceFormat(Number(item.price).toFixed(2))}
         </p>
         <div className="flex items-center space-x-2">
           <Button

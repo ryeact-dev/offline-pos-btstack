@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { pesoPriceFormat } from "@/helpers/client/price-formats";
 import { productsQueries } from "@/hooks/inventory.hook";
 import { useDialogStore } from "@/store/dialog-store";
 import type { InventoryItemFormValues } from "@/zod/inventory.validation";
@@ -181,13 +182,16 @@ function RouteComponent() {
       {
         accessorKey: "price",
         header: "Price",
-        cell: ({ row }) => <p> {row.original.price}</p>,
+        cell: ({ row }) => {
+          const priceString = Number(row.original.price).toFixed(2);
+          return <p>{pesoPriceFormat(priceString)}</p>;
+        },
       },
       {
         accessorKey: "deliveryDate",
         header: "Delivery Date",
         cell: ({ row }) => (
-          <p> {format(new Date(row.original.deliveryDate), "dd/MM/yyyy")}</p>
+          <p> {format(new Date(row.original.deliveryDate), "MMM dd, yyyy")}</p>
         ),
       },
 
@@ -233,16 +237,20 @@ function RouteComponent() {
         <DataTable
           data={data}
           columns={columns}
+          inputPlacerHolder="Filter by product name"
           buttonName="Add Product"
-          onAddNew={onAddNewProduct}
           columnFilter="unit"
           inputFilter={"name"}
+          onAddNew={onAddNewProduct}
           filter={filter}
           onFilterChange={onFilterChange}
           onClear={onClear}
           isNeedToAdd={true}
+          isNeedColumnFilter={true}
           isNeedRowPerPage={false}
           pageSize={PAGE_LIMIT}
+          isHideZeroQuantity={false}
+          route="inventory"
         />
       </div>
     </div>

@@ -4,7 +4,6 @@ import Loader from "@/components/loader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { productsQueries } from "@/hooks/inventory.hook";
-import { salesQueries } from "@/hooks/cart.hooks";
 import { useDialogStore } from "@/store/dialog-store";
 import { TEMP_USER_ID } from "@/utils/global-constant";
 import type { InventoryItemFormValues } from "@/zod/inventory.validation";
@@ -15,6 +14,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { useCallback, useMemo } from "react";
+import { pesoPriceFormat } from "@/helpers/client/price-formats";
+import { cartQueries } from "@/hooks/cart.hooks";
 
 export const Route = createFileRoute("/_dashboard/menu")({
   validateSearch: (search) =>
@@ -22,9 +23,7 @@ export const Route = createFileRoute("/_dashboard/menu")({
   loaderDeps: ({ search: { filter } }) => ({ filter }),
   loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(productsQueries.list());
-    await context.queryClient.ensureQueryData(
-      salesQueries.single(TEMP_USER_ID),
-    );
+    await context.queryClient.ensureQueryData(cartQueries.single(TEMP_USER_ID));
   },
   component: RouteComponent,
   ssr: false,
@@ -58,7 +57,7 @@ function RouteComponent() {
   // Getters
   const { data, isLoading } = useQuery(productsQueries.list());
   const { data: cart, isLoading: isLoadingOrderList } = useQuery(
-    salesQueries.single(TEMP_USER_ID),
+    cartQueries.single(TEMP_USER_ID),
   );
 
   const { openModal } = useDialogStore();
@@ -69,7 +68,7 @@ function RouteComponent() {
     navigate({ to: ".", search: (prev) => ({ ...prev, filter: "" }) });
   }, []);
 
-  const onFilterChange = useCallback((value?: string) => {
+  const onFilterChange = (value?: string) => {
     if (value) {
       navigate({
         to: ".",
@@ -78,7 +77,7 @@ function RouteComponent() {
     } else {
       onClear();
     }
-  }, []);
+  };
 
   const onAddCartButtonHandler = (item: InventoryItemFormValues) => {
     openModal({
@@ -160,13 +159,16 @@ function RouteComponent() {
       {
         accessorKey: "price",
         header: "Price",
-        cell: ({ row }) => <p> P{Number(row.original.price).toFixed(2)}</p>,
+        cell: ({ row }) => {
+          const priceString = Number(row.original.price).toFixed(2);
+          return <p>{pesoPriceFormat(priceString)}</p>;
+        },
       },
       {
         accessorKey: "deliveryDate",
         header: "Delivery Date",
         cell: ({ row }) => (
-          <p> {format(new Date(row.original.deliveryDate), "dd/MM/yyyy")}</p>
+          <p> {format(new Date(row.original.deliveryDate), "MMM dd, yyyy")}</p>
         ),
       },
 
@@ -177,6 +179,7 @@ function RouteComponent() {
             variant="outline"
             size="sm"
             onClick={() => onAddCartButtonHandler(row.original)}
+            disabled={Number(row.original.stockQuantity) <= 0}
           >
             <IconPlus />
             <span className="hidden lg:inline">Add</span>
@@ -184,7 +187,7 @@ function RouteComponent() {
         ),
       },
     ],
-    [cart],
+    [data],
   );
 
   if (isLoading) return <Loader />;
@@ -195,6 +198,7 @@ function RouteComponent() {
     <div className="@container/main relative -mt-1 flex">
       <div className="flex-2 py-4">
         <DataTable
+          inputPlacerHolder="Filter by product name"
           data={data}
           columns={columns}
           columnFilter="unit"
@@ -203,8 +207,11 @@ function RouteComponent() {
           onFilterChange={onFilterChange}
           onClear={onClear}
           isNeedToAdd={false}
+          isNeedColumnFilter={false}
           isNeedRowPerPage={false}
           pageSize={PAGE_LIMIT}
+          isHideZeroQuantity={true}
+          route="inventory"
         />
       </div>
 

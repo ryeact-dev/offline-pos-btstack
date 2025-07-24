@@ -21,6 +21,7 @@ import {
   useDeleteCartItemMutation,
   useUpdateCartMutation,
 } from "@/hooks/cart.hooks";
+import { pesoPriceFormat } from "@/helpers/client/price-formats";
 
 export default function CartOrderList({
   cart,
@@ -48,14 +49,14 @@ export default function CartOrderList({
     //   tax: Number(cartTax),
     //   totalWithTax: Number(cartTotalWithTax),
     // };
-    // openModal({
-    //   data: {
-    //     type: "checkout-order",
-    //     data: orderDetails,
-    //   },
-    //   isModalOpen: true,
-    //   title: "Confirmation",
-    // });
+    openModal({
+      data: {
+        type: "checkout-order",
+        data: { ...cart },
+      },
+      isModalOpen: true,
+      title: "Check out orders",
+    });
   }, [cart]);
 
   const onClearCartHandler = useCallback(() => {
@@ -115,15 +116,21 @@ export default function CartOrderList({
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span>Subtotal</span>
-                      <span>P{Number(cart.subTotal).toFixed(2)}</span>
+                      <span>
+                        {pesoPriceFormat(Number(cart.subTotal).toFixed(2))}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span>Tax (10%)</span>
-                      <span>P{Number(cart.tax).toFixed(2)}</span>
+                      <span>
+                        {pesoPriceFormat(Number(cart.tax).toFixed(2))}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between text-lg font-medium">
                       <span>Total</span>
-                      <span>P{Number(cart.totalWithTax).toFixed(2)}</span>
+                      <span>
+                        {pesoPriceFormat(Number(cart.totalWithTax).toFixed(2))}
+                      </span>
                     </div>
                   </div>
                 </>
