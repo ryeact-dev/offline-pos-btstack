@@ -1,30 +1,12 @@
 import { replacer } from "@/helpers/server/value-replacer";
 import prisma from "@/lib/prisma";
-import { TEMP_USER_ID } from "@/utils/global-constant";
+import { TEMP_USER, TEMP_USER_ID } from "@/utils/global-constant";
 import type {
   AddOrderItemValues,
+  CheckOutOrderValues,
   GetIncompleteOrderValues,
   UpdateOrderItemValues,
 } from "@/zod/products.validation";
-
-export async function getAllSalesDb() {
-  try {
-    const sales = await prisma.sales.findMany();
-
-    return {
-      success: false,
-      message: "Fetching sales failed",
-      sales,
-    };
-  } catch (err) {
-    console.log(err);
-    return {
-      success: false,
-      message: "Fetching sales failed",
-      sales: null,
-    };
-  }
-}
 
 export async function getUserOrderListDb(data: GetIncompleteOrderValues) {
   try {
@@ -33,7 +15,7 @@ export async function getUserOrderListDb(data: GetIncompleteOrderValues) {
         AND: [{ userId: data.id }, { status: data.status }],
       },
       include: {
-        SoldItems: {
+        soldItems: {
           include: {
             product: {
               select: {
@@ -58,11 +40,11 @@ export async function getUserOrderListDb(data: GetIncompleteOrderValues) {
       };
     }
 
-    const { SoldItems, ...rest } = userOrderList;
+    const { soldItems, ...rest } = userOrderList;
     const cartList = {
       ...rest,
       items:
-        SoldItems.map((item) => {
+        soldItems.map((item) => {
           const { product, ...rest } = item;
           return {
             ...rest,
@@ -148,7 +130,7 @@ export async function updateCartDb(data: UpdateOrderItemValues) {
           totalWithTax: data.totalWithTax,
         },
         include: {
-          SoldItems: true,
+          soldItems: true,
         },
       });
 
@@ -159,7 +141,7 @@ export async function updateCartDb(data: UpdateOrderItemValues) {
           },
         });
       } else {
-        const itemToUpdate = salesOrder.SoldItems.find(
+        const itemToUpdate = salesOrder.soldItems.find(
           (item) => item.productId === data.item.productId,
         );
 
@@ -212,20 +194,22 @@ export async function updateCartDb(data: UpdateOrderItemValues) {
   }
 }
 
-export async function checkOutCartsDb(id: number, name: string) {
+export async function checkOutCartsDb(data: CheckOutOrderValues) {
   try {
     await prisma.sales.update({
       where: {
-        id,
+        id: data.id,
       },
       data: {
         status: "completed",
+        customerName: data.customerName,
       },
     });
 
     return {
       success: true,
-      message: `Order checked out successfully by ${name}`,
+      // message: `Order checked out successfully by ${data.userName}`,
+      message: `Order checked out successfully by ${TEMP_USER}`,
     };
   } catch (err) {
     console.log(err);
