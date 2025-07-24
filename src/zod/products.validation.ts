@@ -49,6 +49,13 @@ export const getIncompleteOrderSchema = z.object({
   status: z.string().min(1, "Status is required"),
 });
 
+export const checkOutOrderSchema = z.object({
+  id: z.number().positive("Cart Id is required"),
+  customerName: z.string().min(1, "Customer Name is required"),
+  userName: z.string().optional(),
+});
+
 export type AddOrderItemValues = z.infer<typeof addOrderItemSchema>;
 export type UpdateOrderItemValues = z.infer<typeof updateOrderItemSchema>;
 export type GetIncompleteOrderValues = z.infer<typeof getIncompleteOrderSchema>;
+export type CheckOutOrderValues = z.infer<typeof checkOutOrderSchema>;
