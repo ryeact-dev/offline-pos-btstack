@@ -2,12 +2,8 @@ import * as React from "react";
 import {
   IconChevronDown,
   IconChevronUp,
-  IconCircleX,
-  IconFilter,
-  IconFilter2,
   IconLayoutColumns,
   IconPlus,
-  IconTrendingUp,
 } from "@tabler/icons-react";
 
 import type {
@@ -15,6 +11,7 @@ import type {
   ColumnFiltersState,
   SortingState,
   VisibilityState,
+  Table as TableDefinition,
 } from "@tanstack/react-table";
 
 import {
@@ -46,8 +43,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import PaginationTable from "./pagination-table";
-import { useDebouncedValue } from "@tanstack/react-pacer";
-import TableControlsInventory from "./table-controls/inventory";
+import TableHeaderControls from "./table-header-controls";
 
 export default function DataTable({
   data,
@@ -60,8 +56,12 @@ export default function DataTable({
   onFilterChange,
   onClear,
   isNeedToAdd,
+  isNeedColumnFilter,
   pageSize = 10,
   isNeedRowPerPage = true,
+  isHideZeroQuantity = false,
+  inputPlacerHolder = "Not Set",
+  route,
 }: {
   columns: ColumnDef<any>[];
   data: any;
@@ -73,13 +73,14 @@ export default function DataTable({
   onFilterChange: (value?: string) => void;
   onClear: () => void;
   isNeedToAdd: boolean;
+  isNeedColumnFilter: boolean;
   pageSize?: number;
   isNeedRowPerPage: boolean;
+  isHideZeroQuantity: boolean;
+  inputPlacerHolder: string;
+  route: string;
 }) {
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const [debounceValue, debouncer] = useDebouncedValue(filter, {
-    wait: 500, // Wait 500ms after last change
-  });
 
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -165,8 +166,8 @@ export default function DataTable({
   };
 
   React.useEffect(() => {
-    table.getColumn(inputFilter)?.setFilterValue(debounceValue);
-  }, [debounceValue]);
+    table.getColumn(inputFilter)?.setFilterValue(filter);
+  }, [filter]);
 
   const onClearInputFilter = () => {
     onClear();
@@ -179,7 +180,8 @@ export default function DataTable({
   return (
     <div className="w-full flex-col justify-start gap-6 overflow-auto">
       <div className="flex items-center justify-between gap-4 px-2 lg:px-6">
-        <TableControlsInventory
+        <TableHeaderControls
+          inputPlacerHolder={inputPlacerHolder}
           columnFilter={columnFilter}
           selectedStatuses={selectedStatuses}
           uniqueStatusValues={uniqueStatusValues}
@@ -188,47 +190,51 @@ export default function DataTable({
           filter={filter}
           onFilterChange={onFilterChange}
           onClearInputFilter={onClearInputFilter}
+          route={route}
         />
-
-        {isNeedToAdd && (
+        {(isNeedColumnFilter || isNeedToAdd) && (
           <div className="flex items-center gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <IconLayoutColumns />
-                  <span className="hidden lg:inline">Customize Columns</span>
-                  <span className="lg:hidden">Columns</span>
-                  <IconChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                {table
-                  .getAllColumns()
-                  .filter(
-                    (column) =>
-                      typeof column.accessorFn !== "undefined" &&
-                      column.getCanHide(),
-                  )
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
-                          column.toggleVisibility(!!value)
-                        }
-                      >
-                        {column.columnDef.header as string}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button variant="outline" size="sm" onClick={onAddNew}>
-              <IconPlus />
-              <span className="hidden lg:inline">{buttonName}</span>
-            </Button>
+            {isNeedColumnFilter && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <IconLayoutColumns />
+                    <span className="hidden lg:inline">Customize Columns</span>
+                    <span className="lg:hidden">Columns</span>
+                    <IconChevronDown />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  {table
+                    .getAllColumns()
+                    .filter(
+                      (column) =>
+                        typeof column.accessorFn !== "undefined" &&
+                        column.getCanHide(),
+                    )
+                    .map((column) => {
+                      return (
+                        <DropdownMenuCheckboxItem
+                          key={column.id}
+                          className="capitalize"
+                          checked={column.getIsVisible()}
+                          onCheckedChange={(value) =>
+                            column.toggleVisibility(!!value)
+                          }
+                        >
+                          {column.columnDef.header as string}
+                        </DropdownMenuCheckboxItem>
+                      );
+                    })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            {isNeedToAdd && (
+              <Button variant="outline" size="sm" onClick={onAddNew}>
+                <IconPlus />
+                <span className="hidden lg:inline">{buttonName}</span>
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -317,14 +323,27 @@ export default function DataTable({
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                   >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
+                    {row.getVisibleCells().map((cell) => {
+                      const stockQuantity =
+                        cell.getContext().row.original.stockQuantity;
+                      return isHideZeroQuantity ? (
+                        stockQuantity > 0 && (
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </TableCell>
+                        )
+                      ) : (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      );
+                    })}
                   </TableRow>
                 ))
               ) : (
