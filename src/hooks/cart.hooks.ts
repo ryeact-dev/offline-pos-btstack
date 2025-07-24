@@ -20,11 +20,12 @@ import {
 import { productsQueries } from "./inventory.hook";
 import type {
   AddOrderItemValues,
+  CheckOutOrderValues,
   UpdateOrderItemValues,
 } from "@/zod/products.validation";
 
-export const salesQueries = {
-  all: ["sales"] as const,
+export const cartQueries = {
+  all: ["cart"] as const,
   // list: () =>
   //   queryOptions<OrderDetails[]>({
   //     queryKey: [...productsQueries.all, 'list'],
@@ -34,7 +35,7 @@ export const salesQueries = {
   //   }),
   single: (userId: string, status: string = "incomplete") =>
     queryOptions<OrderDetails>({
-      queryKey: [...salesQueries.all, "single"],
+      queryKey: [...cartQueries.all, "single"],
       queryFn: () => getUserOrderServerFn({ data: { id: userId, status } }),
       placeholderData: (previewData) => previewData,
       retry: 1,
@@ -74,7 +75,7 @@ export function useCreateCartMutation(onClose: () => void) {
       });
 
       queryClient.invalidateQueries({
-        queryKey: [...salesQueries.all, "single"],
+        queryKey: [...cartQueries.all, "single"],
       });
 
       onClose();
@@ -116,7 +117,7 @@ export function useUpdateCartMutation(onClose?: () => void) {
         });
 
         queryClient.invalidateQueries({
-          queryKey: [...salesQueries.all, "single"],
+          queryKey: [...cartQueries.all, "single"],
         });
 
         onClose && onClose();
@@ -128,11 +129,7 @@ export function useUpdateCartMutation(onClose?: () => void) {
 export function useCheckOutSalesMutation(onClose: () => void) {
   const queryClient = useQueryClient();
 
-  return useMutation<
-    ApiResponse,
-    ErrorWithDataResponse,
-    { id: number; name: string }
-  >({
+  return useMutation<ApiResponse, ErrorWithDataResponse, CheckOutOrderValues>({
     mutationFn: (data) => checkoutCartServerFn({ data }),
 
     onError: ({ data }) => {
@@ -162,7 +159,7 @@ export function useCheckOutSalesMutation(onClose: () => void) {
       });
 
       queryClient.invalidateQueries({
-        queryKey: [...salesQueries.all, "single"],
+        queryKey: [...cartQueries.all, "single"],
       });
 
       onClose();
@@ -207,7 +204,7 @@ export function useDeleteCartItemMutation() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: [...salesQueries.all, "single"],
+        queryKey: [...cartQueries.all, "single"],
       });
     },
   });
@@ -250,7 +247,7 @@ export function useDeleteCartListMutation(onClose: () => void) {
       });
 
       queryClient.invalidateQueries({
-        queryKey: [...salesQueries.all, "single"],
+        queryKey: [...cartQueries.all, "single"],
       });
 
       onClose();
