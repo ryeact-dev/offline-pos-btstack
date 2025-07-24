@@ -7,5 +7,6 @@ export const PRODUCT_UNIT = [
 ];
 
 export const TEMP_USER_ID = "75a7fd35-2358-4b09-a983-06b7d2b557fa";
+export const TEMP_USER = "Admin";
 
 export const TAX = 0.1;
