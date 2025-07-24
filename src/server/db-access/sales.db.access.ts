@@ -1,29 +1,55 @@
-// import { replacer } from "@/helpers/server/value-replacer";
-// import prisma from "@/lib/prisma";
-// import { TEMP_USER_ID } from "@/utils/global-constant";
-// import type {
-//   AddOrderItemValues,
-//   GetIncompleteOrderValues,
-//   UpdateOrderItemValues,
-// } from "@/zod/products.validation";
+import { replacer } from "@/helpers/server/value-replacer";
+import prisma from "@/lib/prisma";
+import { TEMP_USER_ID } from "@/utils/global-constant";
+import type {
+  AddOrderItemValues,
+  GetIncompleteOrderValues,
+  UpdateOrderItemValues,
+} from "@/zod/products.validation";
 
-// export async function getAllSalesDb() {
-//   try {
-//     const sales = await prisma.sales.findMany();
+export async function getAllSalesDb() {
+  try {
+    const sales = await prisma.sales.findMany({
+      where: {
+        updatedAt: {
+          lte: new Date(),
+        },
+      },
+      include: {
+        soldItems: true,
+        user: {
+          select: {
+            fullName: true,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
 
-//     return {
-//       success: false,
-//       message: "Fetching sales failed",
-//       sales,
-//     };
-//   } catch (err) {
-//     return {
-//       success: false,
-//       message: "Fetching sales failed",
-//       sales: null,
-//     };
-//   }
-// }
+    const salesMapped = sales.map((item) => {
+      return {
+        ...item,
+        user: item.user.fullName,
+      };
+    });
+
+    const json = JSON.stringify(salesMapped, replacer);
+
+    return {
+      success: false,
+      message: "Fetching sales failed",
+      sales: json,
+    };
+  } catch (err) {
+    return {
+      success: false,
+      message: "Fetching sales failed",
+      sales: null,
+    };
+  }
+}
 
 // export async function getUserOrderListDb(data: GetIncompleteOrderValues) {
 //   try {

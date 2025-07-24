@@ -1,26 +1,21 @@
-// import { createServerFn } from "@tanstack/react-start";
-// import {
-//   addSalesDb,
-//   checkOutSalesDb,
-//   deleteSalesDb,
-//   getUserOrderListDb,
-//   updateSalesDb,
-// } from "../db-access/sales.db.access";
-// import { userBaseSchema } from "@/zod/user.validation";
-// import {
-//   addOrderItemSchema,
-//   getIncompleteOrderSchema,
-//   updateOrderItemSchema,
-// } from "@/zod/products.validation";
+import { createServerFn } from "@tanstack/react-start";
 
-// // export const getAllSalesServerFn = createServerFn({ method: 'GET' })
-// //   //   .middleware([authenticatedMiddleware])
-// //   //   .validator(getAllCompetitionsSchema)
-// //   .handler(async ({ data }) => {
-// //     const res = await getAllProductsDb();
-// //     // Parse the JSON string from server response into an array of objects
-// //     return JSON.parse(res.products || '');
-// //   });
+import { userBaseSchema } from "@/zod/user.validation";
+import {
+  addOrderItemSchema,
+  getIncompleteOrderSchema,
+  updateOrderItemSchema,
+} from "@/zod/products.validation";
+import { getAllSalesDb } from "../db-access/sales.db.access";
+
+export const getAllSalesServerFn = createServerFn({ method: "GET" })
+  //   .middleware([authenticatedMiddleware])
+  //   .validator(getAllCompetitionsSchema)
+  .handler(async ({ data }) => {
+    const res = await getAllSalesDb();
+    // Parse the JSON string from server response into an array of objects
+    return JSON.parse(res.sales || "");
+  });
 
 // export const getUserOrderServerFn = createServerFn({ method: "GET" })
 //   //   .middleware([authenticatedMiddleware])

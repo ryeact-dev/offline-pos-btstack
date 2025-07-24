@@ -1,75 +1,7 @@
+import type { Sales, SoldItems } from "@/generated/prisma/client";
 import type { InventoryItemFormValues } from "@/zod/inventory.validation";
 import type { Decimal } from "@prisma/client/runtime/library";
 import type React from "react";
-
-// export interface QueryParams {
-//   filter: string
-//   page: number
-//   limit: number
-//   eventId?: string
-//   competitionId?: string
-//   refetchInterval?: number
-//   user?: CurrentUser | null
-// }
-
-// Add this type to match the omitted fields
-// export type SafeUser = Omit<User, 'email' | 'createdAt' | 'password'>;
-// export type CandidateNoCreatedAt = Omit<Candidate, 'createdAt'>
-
-// export interface CandidatesWithScoresheet extends Candidate {
-//   scoresheet: Array<Scoresheet>
-//   event: UserEvent
-// }
-
-// export interface CompetitionLink {
-//   id: string
-//   name: string
-//   number: number
-//   isActive: boolean
-// }
-
-// export interface UserCompetition {
-//   id?: string
-//   eventId?: string
-//   number: number
-//   name: string
-//   multiplier: Decimal | number
-//   isFinalist: boolean
-//   finalists: number
-//   isActive: boolean
-//   criteria: Array<CriteriaItem>
-// }
-
-// export interface SingleCandidateWithScoresheet {
-//   userId: string
-//   candidate: Candidate
-//   candidateScoresheet: Scoresheet | null
-//   competition: UserCompetition
-// }
-
-// export interface CriteriaItem {
-//   criteriaTitle: string
-//   percent: number
-//   score: number
-// }
-
-// interface UserEvent {
-//   id: string
-//   name: string
-// }
-
-// export interface CurrentUser
-//   extends Omit<User, 'email' | 'createdAt' | 'password' | 'eventId'> {
-//   event: UserEvent | null
-//   competitionIds?: Array<string>
-// }
-
-// export interface UserWithEventAndCompetitions
-//   extends Omit<User, 'createdAt' | 'eventId'> {
-//   event: UserEvent
-//   competitionIds?: Array<string>
-//   competitions?: Array<UserCompetition>
-// }
 
 // Modal Props
 // Create a union type of all possible modal data types
@@ -105,6 +37,11 @@ export interface OrderDetails {
 export interface AddProductModalData {
   cart: OrderDetails | null;
   item: CartItem;
+}
+
+export interface TransactionDetails extends Sales {
+  soldItems: SoldItems;
+  user: string;
 }
 
 export type ModalData =
